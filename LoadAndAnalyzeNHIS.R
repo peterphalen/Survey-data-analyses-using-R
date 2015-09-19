@@ -1,4 +1,4 @@
-  #credit to A. Damaco at asdfree.com for most of the data prep code
+# By Peter Phalen... but credit to A. Damaco at asdfree.com for most of the data prep code
 
   wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools", "lawstat")
   has   <- wants %in% rownames(installed.packages())
