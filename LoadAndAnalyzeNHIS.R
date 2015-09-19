@@ -42,7 +42,7 @@
   # note: this can be changed to any year that has already been downloaded locally
   # by the "1963-2014 - download all microdata.R" program above
   year <- 2014
-  comparedToYear <- 2010
+  comparedToYear <- 2009
   
   
   minimumAge <- 18
@@ -273,14 +273,26 @@
     
     # create two different poverty category variables 
     y <- 
+      transform(
+        y, 
+        povrati3 = ifelse(povrati3 == 999999, NA, povrati3),
+        ahcsyr1 = ifelse(ahcsyr1 < 7, ahcsyr1, NA),        
+        notcov = ifelse(notcov < 7, notcov, NA),
+        asisad = ifelse(asisad < 7, asisad, NA),
+        asinerv = ifelse(asinerv < 7, asinerv, NA),
+        asihopls = ifelse(asihopls < 7, asihopls, NA),
+        asirstls = ifelse(asirstls < 7, asirstls, NA),
+        asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
+        asiwthls = ifelse(asiwthls < 7, asiwthls, NA)        
+      )
+    y <- 
       transform( 
         y , 
         
         # note that these poverty categories go out to the tenth decimal
         
         # create an 'at or above 138% fpl' flag
-        povrati3 = ifelse(povrati3 == 999999, NA, povrati3),
-        above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1))  ,
+        above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1), exclude=NA)  ,
         
         # create a four-category poverty variable
         fine.povcat =
@@ -290,17 +302,10 @@
             labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
           ),
         
-        asisad = ifelse(asisad < 7, asisad, NA),
-        asinerv = ifelse(asinerv < 7, asinerv, NA),
-        asihopls = ifelse(asihopls < 7, asihopls, NA),
-        asirstls = ifelse(asirstls < 7, asirstls, NA),
-        asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
-        asiwthls = ifelse(asiwthls < 7, asiwthls, NA),
+
         
         educ1 = ifelse(educ1>22, NA, as.numeric(educ1)),
-        notcov <- ifelse(notcov < 7, notcov, NA),        
         coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
-        ahcsyr1 <- ifelse(ahcsyr1 < 7, ahcsyr1, NA),        
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
         YEAR = factor(1, labels = year),
         WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
@@ -422,28 +427,27 @@
     # START OF VARIABLE RECODING #
     # any new variables that the user would like to create should be constructed here #
     # create two different poverty category variables 
-    
+    y <- 
+      transform( 
+        y ,
+        notcov <- ifelse(notcov < 7, notcov, NA),        
+        ahcsyr1 <- ifelse(ahcsyr1 < 7, ahcsyr1, NA) ,
+        educ1 = ifelse(educ1>22, NA, as.numeric(educ1))
+ 
+      )
     
     y <- 
       transform( 
         y , 
-        # note that these poverty categories go out to the tenth decimal
-        
-
-        
-        
-        educ1 = ifelse(educ1>22, NA, as.numeric(educ1)),
-        notcov <- ifelse(notcov < 7, notcov, NA),        
         coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
-        ahcsyr1 <- ifelse(ahcsyr1 < 7, ahcsyr1, NA),        
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
-        YEAR = factor(0, labels = year),
+        YEAR = factor(1, labels = year),
         WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
         sex = factor(sex, labels=c("Male", "Female")),
-        PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0)),
-        Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA)
-        
+        PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0))
       )
+    
+    
   #create psychological distress variable (the lables for these variables changed in 2013)
   if (year < 2013 ){
     
@@ -456,6 +460,7 @@
         restless = ifelse(restless < 7, restless, NA),
         effort = ifelse(effort < 7, effort, NA),
         worthls = ifelse(worthls < 7, worthls, NA)
+        
         )
     
     y <- 
@@ -473,8 +478,6 @@
     y <- 
       transform( 
         y , 
- 
-
   SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1), exclude=NA)
   )
   
@@ -513,22 +516,26 @@
     y <- 
       transform( 
         y , 
-    povrati3 = ifelse(povrati3 == 999999, NA, povrati3/1000)
+    povrati3 = ifelse(povrati3 == 999999, NA, povrati3/1000),
+    Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA)
+    
       )
      
   }
-  if (year == 2009){
+  if (year <= 2009){
     y <- 
       transform( 
         y , 
-        povrati3 = ifelse(povrati2 == 9999, NA, povrati2/100)
+        povrati3 = ifelse(povrati2 == 9999, NA, povrati2/100),
+        Unemployment = ifelse(wrklyr3 < 7, wrklyr3, NA)
+        
       )
     
   }
   y <- 
     transform( 
       y , 
-      above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1))  ,
+      above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1), exclude=NA)  ,
       # create a four-category poverty variable
       fine.povcat =
         cut( 
@@ -582,7 +589,7 @@
       nest = TRUE , # stratification is nested
       weights = ~wtfa_sa,  # weights
       data = rbind(pre.i,post.i) ) 
-    )
+    
   
   psa.noImp <- subset(psa.noImp, age_p >= minimumAge & age_p < maximumAge)
   
@@ -791,6 +798,31 @@ Average ages of people with and without SMI
       ")
   svyby(~age_p,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
   
+  
+  cat("################################################################################
+
+      
+      
+      Level of unemployment 
+           0 = Had job last week
+           1 = No job last week, had job past 12 months
+           2 = No job last week, no job past 12 months
+           3 = Never worked
+      
+      ###### in ",year,"
+      
+      ")
+  svyby(~age_p,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
+  cat("
+      
+      
+      ###### in 2014
+      
+      ")
+  svyby(~age_p,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
+  
+  
+  
   psa.CovPre <-  subset(psa.Pre, coverage=="Covered now")
   psa.CovPost <-  subset(psa.Post, coverage=="Covered now")
   
@@ -949,6 +981,7 @@ Among people with any insurance, what % were covered via medicaid or medicare?
  ###### 
 
       ")
+
   summary(MIcombine( with( psa.impPost , 
                            svyglm(factor(ahcsyr1) ~
                                     as.character(above.138) +
@@ -961,7 +994,8 @@ Among people with any insurance, what % were covered via medicaid or medicare?
                                     as.character(SMI) ,
                                   family=quasibinomial())
   )
-  ))
+  )
+  )
 
   cat("
 ################################################################################
@@ -1002,9 +1036,13 @@ Among people with any insurance, what % were covered via medicaid or medicare?
       
       ")
   
+  psa.impCovPost <-  subset(psa.impPost, !is.na(coverage))
   
-  psa.impCovPost <-  subset(psa.impPost, coverage=="Covered now")
-  psa.impCov <-  subset(psa.imp, coverage=="Covered now")
+  psa.impCovPost <-  subset(psa.impCovPost, coverage=="Covered now")
+  
+  psa.impCov <-  subset(psa.imp, !is.na(coverage))
+  
+  psa.impCov <-  subset(psa.impCov, coverage=="Covered now")
   
   
   summary(MIcombine( with( psa.impCovPost , 
