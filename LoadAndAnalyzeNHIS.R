@@ -1,8 +1,5 @@
-  # analyze survey data for free (http://asdfree.com) with the r language
-  # national health interview survey
-  # all available files (including documentation)
-  
-  
+  #credit to A. Damaco at asdfree.com for most of the data prep code
+
   wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools", "lawstat")
   has   <- wants %in% rownames(installed.packages())
   if(any(!has)) install.packages(wants[!has])
@@ -19,7 +16,7 @@
   
   
   # # # # # # # # # # # # # # # # # # # #
-  # # block of code get data from NHIS... warning: this can literally take all night
+  # # block of code get data from NHIS... warning: this can literally take all night. uncomment to run
   # # # # # # # # # # # # # # # # # # # # 
   #  options( encoding = "windows-1252" )  	# # only macintosh and *nix users need this line
   #    library(downloader)
@@ -40,24 +37,41 @@
   
   # choose what year of data to analyze
   # note: this can be changed to any year that has already been downloaded locally
-  # by the "1963-2014 - download all microdata.R" program above
   year <- 2014
   comparedToYear <- 2009
   
+  ## Minimum and maximum ages to include in dataset. 
+  ## Your choice here subsets down your models/stats.
+  ## If you want to use the complete data, just set 
+  ## minimumAge to 0 and maximumAge to 999
+  ##
+  ## Note: minimumAge =< x < maximumAge
   
   minimumAge <- 18
   maximumAge <- 65
   
+  #use this as a 'greater than or equal to' cutoff to determine who counts as distressed. 
+  #Most common cut-off is 13 for SMI, see Kessler et al 2010 http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
+  SMIthreshold <- 13
+  
+  ## Select the analysis variables that you're interested in
+  ## You need to specify these or your analyses will take 
+  ## forever and/or your computer may crash
   
   variables.to.keep <-
     c( 
-      #    survey variables
-      "psu_p",  "strat_p", "wtfa_sa",
+      ## survey variables: do not alter these
+      "psu_p",   # (cluster)
+      "strat_p", # (stratum)
+      "wtfa_sa", # (weight) 
       
-      # merge variables
-      "hhx" , "fmx" , "fpx" , 
+      # merge variables: do not alter these
+      "hhx" ,  # (household unique identifier)
+      "fmx" ,  # (family unique identifier)
+      "fpx" ,  # (person unique identifier)
+
       
-      # analysis variables
+      # analysis variables: you can change these
       "age_p",   
       "SMI" ,
       "YEAR", 
@@ -77,9 +91,7 @@
     )
   
   
-  #use this as a 'greater than or equal to' cutoff to determine who counts as distressed. 
-  #Most common use is 13 for SMI, see Kessler et al 2010 http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
-  SMIthreshold <- 13
+
   
   
   # set working directory
@@ -89,26 +101,22 @@
   # http://r-survey.r-forge.r-project.org/survey/exmample-lonely.html
   options( survey.lonely.psu = "adjust" )
   options(stringsAsFactors=FALSE)
-  # this setting matches the MISSUNIT option in SUDAAN
   
   # construct the filepath (within the current working directory) to the three rda files
   path.to.personsx.file <- paste( getwd() , year , "personsx.rda" , sep = "/" )
   path.to.samadult.file <- paste( getwd() , year , "samadult.rda" , sep = "/" )
   path.to.incmimp.file <- paste( getwd() , year , "incmimp.rda" , sep = "/" )
   
-  
   # print those filepaths to the screen
   print( path.to.personsx.file )
   print( path.to.samadult.file )
   print( path.to.incmimp.file )
-  
   
   # now the "NHIS.11.personsx.df" data frame can be loaded directly
   # from your local hard drive.  this is much faster.
   load( path.to.personsx.file )		# this loads a data frame called NHIS.11.personsx.df
   load( path.to.samadult.file )		# this loads a data frame called NHIS.11.samadult.df
   # the five imputed income files will be loaded later
-  
   
   # all objects currently in memory can be viewed with the list function
   ls()
@@ -123,7 +131,6 @@
   # repeat this for the sample adult data frame, 
   # but not for the five imputed income data frames (which will be dealt with later)
   samadult.name <- paste( "NHIS" , substr( year , 3 , 4 ) , "samadult" , "df" , sep = "." )
-  
   
   # copy the personsx data frame to the variable x for easier analyses
   # (because NHIS.11.personsx.df is unwieldy to keep typing)
@@ -144,16 +151,11 @@
   #####################################
   # merge personsx and samadult files #
   #####################################
-  
-  # note: the logical steps taken here could also be applied to 
-  # merging the personsx and samchild files
-  
+
   # the personsx and samadult files are both at the individual or person-level
   # (as opposed to family-level or household-level)
   # so merging them together will require three variables:
-  # hhx (household unique identifier)
-  # fmx (family unique identifier)
-  # fpx (person unique identifier)
+
   
   # store the names of these three columns in a character vector
   merge.vars <- c( "hhx" , "fmx" , "fpx" )
@@ -301,8 +303,6 @@
             c( -Inf , 1.38 , 2 , 4 , Inf ) ,
             labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
           ),
-        
-
         
         educ1 = ifelse(educ1>22, NA, as.numeric(educ1)),
         coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
