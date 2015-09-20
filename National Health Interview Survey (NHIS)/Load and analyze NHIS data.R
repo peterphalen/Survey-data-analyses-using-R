@@ -639,8 +639,11 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   for ( i in 1:5 ){
     # For each of the five imputed dataset, collapse Pre-Post for multi-year analyses
-    assign(paste0("x",i), rbind(pre.i,post.i))
-    assign(paste0("x",i), rbind(pre.i,post.i))
+    assign(paste0("x",i), rbind(
+                                get( paste0( "x" , i, "pre" ) ),
+                                get( paste0( "x" , i, "post" ) )
+                                )
+                          )
     assign(paste0( "x" , i, "pre" ), NULL)
     assign(paste0( "x" , i, "post" ), NULL)
   }
@@ -818,7 +821,9 @@ cat("###########################################################################
   ## Plot income on K6 score
   ## Note: plots like these won't show up on your .txt sink file,
   ## but they'll pop up while the script is running to give you 
-  ## something to look at while you wait
+  ## something to look at while you wait. Also, this isn't multiply 
+  ## imputed so treat it as a useful approximation rather than a 
+  ## complete picture
   svyplot(povrati3~K6, 
           design=psa.Post, 
           style="transparent",
@@ -826,7 +831,7 @@ cat("###########################################################################
           xlab="K6 Psychological Distress")
   abline(1.38,0, col="darkred")    # mark poverty line
   text(22,2, "138% FPL", col=2)   #label poverty line
-  title("Income and Psychological Distress") # Add a title
+  title("Income and Psychological Distress (2014)") # Add a title
   
   
   cat("
