@@ -617,7 +617,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       id = ~psu_p , 
       strata = ~strat_p ,
       nest = TRUE ,
-      weights = ~wtfa_sa,  # note the change in the weighting variable
+      weights = ~wtfa_sa, 
       data = imputationList( list( x1pre , x2pre , x3pre , x4pre , x5pre ) )
     )
   #subset to specified age ranges
