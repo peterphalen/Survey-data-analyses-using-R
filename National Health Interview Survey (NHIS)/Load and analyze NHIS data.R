@@ -1,25 +1,22 @@
 
-  wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools", "lawstat")
+#download packages you don't have. First four are only needed for getting 
+#the data from NHIS in the first place  
+wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   has   <- wants %in% rownames(installed.packages())
   if(any(!has)) install.packages(wants[!has])
   
   
   #load packages#
   library(survey)   # load survey package (analyzes complex design surveys)
-  library(mitools)	# allows analysis of multiply-imputed survey data
-  require(lawstat)
-  require(xlsx)
-  require(survival)
-  require(rms)
-  require(MASS)
-  
+  library(mitools)	# allows analysis of multiply-imputed survey data  
   
   # # # # # # # # # # # # # # # # # # # #
-  # # block of code get data from NHIS... warning: this can literally take all night. uncomment to run
+  # # block of code to get data from NHIS... warning: this can literally take all night. uncomment to run
   # # # # # # # # # # # # # # # # # # # # 
-  #  options( encoding = "windows-1252" )  	# # only macintosh and *nix users need this line
-  #    library(downloader)
-  #    nhis.years.to.download <- c(2010,2014)
+  #  options( encoding = "windows-1252" )  	# only macintosh and *nix users need this line
+  #    library(downloader) 
+  #    setwd( "/Users/PeterPhalen/Google Drive/Data analysis" )
+  #    nhis.years.to.download <- c(2010,2014)  # choose the years that you want to get
   #    source_url( "https://raw.github.com/ajdamico/asdfree/master/National%20Health%20Interview%20Survey/download%20all%20microdata.R" , 
   #                prompt = FALSE , 
   #                echo = TRUE )
