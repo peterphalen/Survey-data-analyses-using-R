@@ -19,9 +19,8 @@
   # # # # # # # # # # # # # # # # # # # # 
   #  options( encoding = "windows-1252" )  	# # only macintosh and *nix users need this line
   #    library(downloader)
-  #    setwd( "/Users/PeterPhalen/Google Drive/Data analysis" )
-  #    nhis.years.to.download <- 2010
-  #   source_url( "https://raw.github.com/ajdamico/asdfree/master/National%20Health%20Interview%20Survey/download%20all%20microdata.R" , 
+  #    nhis.years.to.download <- c(2010,2014)
+  #    source_url( "https://raw.github.com/ajdamico/asdfree/master/National%20Health%20Interview%20Survey/download%20all%20microdata.R" , 
   #                prompt = FALSE , 
   #                echo = TRUE )
   # # # # # # # # # # # # # # #
@@ -87,10 +86,6 @@
       "K6"                # K6 score, continuous, 0-24
     
     )
-  
-  
-
-  
   
   # set working directory
   setwd( "/Users/PeterPhalen/Google Drive/Data analysis" )
@@ -280,7 +275,7 @@
         #### Most variables have codes for things like "Refused to answer"
         #### This block of recodes is intended to set those kinds of codes
         #### to NA   
-        povrati3 = ifelse(povrati3 == 999999, NA, povrati3), #poverty line ratio
+        povrati3 = ifelse(povrati3 == 999999, NA, povrati3), #poverty line ratio (999999 is an NA code)
         ahcsyr1 = ifelse(ahcsyr1 < 7, ahcsyr1, NA), #seen mh prof in past 12 months        
         notcov = ifelse(notcov < 7, notcov, NA), #Insurance coverage
         Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA), #level of unemployment
@@ -816,6 +811,18 @@ cat("###########################################################################
   summary(MIcombine(with( psa.impPost , 
                           svyby(~factor(above.138),~as.character(SMI),svymean,na.rm=T))) )
   
+  ## Plot income on K6 score
+  ## Note: plots like these won't show up on your .txt sink file,
+  ## but they'll pop up while the script is running and keep you
+  svyplot(povrati3~K6, 
+          design=psa.Post, 
+          style="transparent",
+          ylab="Income (ratio of Federal Poverty Line)",
+          xlab="K6 Psychological Distress")
+  abline(1.38,0, col="darkred")    # mark poverty line
+  text(22,2, "138% FPL", col=2)   #label poverty line
+  title("Income and Psychological Distress") # Add a title
+  
   
   cat("
 ################################################################################
@@ -1007,8 +1014,7 @@ cat("
 
       ")
   
-  summary(
-                           svyglm(as.numeric(coverage) ~
+                  summary(svyglm(as.numeric(coverage) ~
                                     as.character(SMI) + 
                                     as.character(YEAR) + 
                                     as.character(SMI):as.character(YEAR),
@@ -1041,13 +1047,13 @@ cat("
                                     as.character(SMI) + 
                                     as.character(YEAR) + 
                                     as.character(SMI):as.character(YEAR))
-  )
-  ) 
+                            )
+               ) 
   )
   
   
   cat("
-      ################################################################################
+################################################################################
       
 
       ###############  
@@ -1090,8 +1096,9 @@ cat("
                                     as.character(SMI) + 
                                     as.character(YEAR) + 
                                     as.character(SMI):as.character(YEAR))
-  )
-  ))
+                    )
+            )
+    )
   
   rm(psa.impCov)
   
@@ -1143,6 +1150,52 @@ cat("
   )
   
   
+  cat("
+
+################################################################################
+      
+      
+      ###############  
+      #### Simple DIDs for income (SMI v. no-SMI) 
+      ########       
+      
+      ")
+  
+  summary(
+    svyglm(as.numeric(povrati3) ~
+             as.character(SMI) + 
+             as.character(YEAR) +
+             as.character(SMI):as.character(YEAR),
+           design=psa.noImp) 
+  )
+  
+  
+  cat("
+            
+      ###############  
+      #### DIDs for income (SMI v. no-SMI) 
+      #### controlling for lots of variables.
+      #### Income disparity is getting worse.
+      ########       
+      
+      ")
+  
+  summary( MIcombine( with( psa.imp , 
+                            svyglm(as.numeric(povrati3) ~
+                                     as.character(WHITE) +
+                                     as.character(sex) +
+                                     age_p +
+                                     educ1 +
+                                     Unemployment +
+                                     as.character(SMI) + 
+                                     as.character(YEAR)  +
+                                     as.character(SMI):as.character(YEAR)
+                            )
+                    ) 
+            )
+  )
+  
+  
   
   cat("
       
@@ -1168,7 +1221,9 @@ cat("
                                               as.character(YEAR)  +
                                               as.character(WHITE):as.character(YEAR)
                                      )
-  )))
+                                )
+                            )
+                        )
   
  
 
