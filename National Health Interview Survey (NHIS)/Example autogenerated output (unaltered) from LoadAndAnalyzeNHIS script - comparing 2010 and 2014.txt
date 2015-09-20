@@ -19,7 +19,7 @@
  
       
       
-      Count of the USA population with and without Serious Psychological Distress (SMI)
+    Count of the USA population with and without Serious Psychological Distress (SMI)
             
       
       ###### in 2010 
@@ -36,9 +36,10 @@ as.character(SMI)No Serious Distress          181596155 2271545
 as.character(SMI)Serious Psych Distress (SMI)   6411241  256907
 
 ################################################################################
-     Percent (%) of the USA population with and without Serious Psychological Distress (SMI)
+     
+    Percent (%) of the USA population with and without Serious Psychological Distress (SMI)
   
-     The "mean" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
+    The "mean" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
 
      ###### in 2010 
   
@@ -54,12 +55,11 @@ as.character(SMI)No Serious Distress          0.965899 0.0013
 as.character(SMI)Serious Psych Distress (SMI) 0.034101 0.0013
 ################################################################################
  
+
     Percent (%) of the USA population with health insurance coverage at the time of survey 
     (Split up between those With vs. Without SMI)
 
-      
-
-    ###### in 2010 
+     ###### in 2010 
 
                                               as.character(SMI) factor(coverage)Not covered now
 No Serious Distress                   No Serious Distress                       0.2145664
@@ -81,7 +81,7 @@ No Serious Distress                                 0.7929858
 Serious Psych Distress (SMI)                        0.7332902
 
 
-    ###### in 2014
+     ###### in 2014
 
                                               as.character(SMI) factor(coverage)Not covered now
 No Serious Distress                   No Serious Distress                       0.1600308
@@ -101,6 +101,7 @@ Serious Psych Distress (SMI)                            0.2806770
                              ci_u.factor(coverage)Covered now
 No Serious Distress                                 0.8467444
 Serious Psych Distress (SMI)                        0.7929913
+
 ################################################################################
 
    % who saw a mental health professional in past 12 months 
@@ -139,11 +140,10 @@ Serious Psych Distress (SMI)                      0.39427006
 ################################################################################
 
 
-
     % of people at 138% of poverty line. (Note: people below 138% qualified for expanded 
     medicaid as of January 1, 2014)
       
-    ###### in  2010 
+     ###### in  2010 
       
       Multiple imputation results:
       with(psa.impPre, svyby(~factor(above.138), ~as.character(SMI), 
@@ -167,7 +167,7 @@ No Serious Distress:factor(above.138)Above 138% poverty line               2 %
 Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line     10 %
 
       
-    ###### in 2014
+     ###### in 2014
 
       Multiple imputation results:
       with(psa.impPost, svyby(~factor(above.138), ~as.character(SMI), 
@@ -195,7 +195,7 @@ Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line      4 %
 
     Average ages of people with and without SMI
       
-    ###### in  2010 
+      ###### in  2010 
       
                                               as.character(SMI)    age_p     ci_l     ci_u
 No Serious Distress                   No Serious Distress 40.43678 40.16670 40.70686
@@ -203,7 +203,7 @@ Serious Psych Distress (SMI) Serious Psych Distress (SMI) 43.43107 42.39268 44.4
 
       
 
-    ###### in 2014
+      ###### in 2014
 
                                               as.character(SMI)    age_p     ci_l     ci_u
 No Serious Distress                   No Serious Distress 40.65564 40.37712 40.93417
@@ -212,7 +212,7 @@ Serious Psych Distress (SMI) Serious Psych Distress (SMI) 43.17748 42.06951 44.2
 ################################################################################
 
       
-      Average level of unemployment by SMI status
+    Average level of unemployment by SMI status
            0 = Had job last week
            1 = No job last week, had job past 12 months
            2 = No job last week, no job past 12 months
@@ -235,8 +235,7 @@ Serious Psych Distress (SMI) Serious Psych Distress (SMI)    1.2194424 1.1348378
 ################################################################################
       
       
-      
-      Among people with any insurance, what % were covered via medicaid or medicare?
+    Among people with any insurance, what % were covered via medicaid or medicare?
       
       ###### in  2010 
       
@@ -270,6 +269,7 @@ No Serious Distress                              0.1572818
 Serious Psych Distress (SMI)                     0.5536147
 
   
+
   #############################
   # What predicts SMI? (2014) #
   #############################
@@ -290,6 +290,7 @@ age_p                     0.02132029 0.003100444  0.01524353  0.027397050      0
 Unemployment              0.38640015 0.036635404  0.31459580  0.458204493      0 %
 
   
+
   #######################################
   # Who is seeking MH treatment? (2014) #
   #######################################
@@ -321,6 +322,7 @@ Unemployment                                   0.402421644      0 %
 as.character(SMI)Serious Psych Distress (SMI)  2.142059373      0 %
 
   
+
   ####################################
   # Who has health insurance? (2014) #
   ####################################
@@ -350,6 +352,7 @@ as.character(sex)Male                         -0.2332097859      0 %
 age_p                                          0.0151291473      0 %
 Unemployment                                   0.1732665383      1 %
 as.character(SMI)Serious Psych Distress (SMI)  0.1597018692      0 %
+
 
 
   ################################################################################
@@ -383,6 +386,7 @@ Unemployment                                   0.74174918      0 %
 as.character(SMI)Serious Psych Distress (SMI)  0.92401057      1 %
 
 ################################################################################
+
 
  #####################
  #### Differences in differences (DIDs) for health insurance coverage (SMI v. no-SMI).
@@ -573,6 +577,7 @@ as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.07980813
 
 ################################################################################
 
+
  ###############  
  #### DIDs for seeing mental health clinician in past 12 months (SMI v. no-SMI) 
  ########       
@@ -666,8 +671,13 @@ as.character(YEAR)2014                                                4.512246e-
 as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  4.340494e-02      0 %
 
       
+################################################################################
+      
+      ###############  
+      #### DID for racial disparity in health coverage
+      #### Things got a little better
+      ########  
 
-DID for racial disparity in health coverage
       
       Multiple imputation results:
       with(psa.imp, svyglm(as.numeric(coverage) ~ povrati3 + educ1 + 

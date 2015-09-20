@@ -714,7 +714,7 @@
  
       
       
-      Count of the USA population with and without Serious Psychological Distress (SMI)
+    Count of the USA population with and without Serious Psychological Distress (SMI)
             
       
       ###### in",year,"
@@ -733,9 +733,10 @@
   
   cat("
 ################################################################################
-     Percent (%) of the USA population with and without Serious Psychological Distress (SMI)
+     
+    Percent (%) of the USA population with and without Serious Psychological Distress (SMI)
   
-     The \"mean\" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
+    The \"mean\" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
 
      ###### in",year,"
   
@@ -756,12 +757,11 @@
   
 cat("################################################################################
  
+
     Percent (%) of the USA population with health insurance coverage at the time of survey 
     (Split up between those With vs. Without SMI)
 
-      
-
-    ###### in",year,"
+     ###### in",year,"
 
       ")
   
@@ -769,12 +769,13 @@ cat("###########################################################################
   
   cat("
 
-    ###### in 2014
+     ###### in 2014
 
       ")
   (svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Post, na.rm=T) )
   
-  cat("################################################################################
+  cat("
+################################################################################
 
    % who saw a mental health professional in past 12 months 
        
@@ -797,11 +798,10 @@ cat("###########################################################################
 ################################################################################
 
 
-
     % of people at 138% of poverty line. (Note: people below 138% qualified for expanded 
     medicaid as of January 1, 2014)
       
-    ###### in ",year,"
+     ###### in ",year,"
       
       ")
   
@@ -810,7 +810,7 @@ cat("###########################################################################
   
   cat("
       
-    ###### in 2014
+     ###### in 2014
 
       ")
   summary(MIcombine(with( psa.impPost , 
@@ -823,14 +823,14 @@ cat("###########################################################################
 
     Average ages of people with and without SMI
       
-    ###### in ",year,"
+      ###### in ",year,"
       
       ")
   svyby(~age_p,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
   cat("
       
 
-    ###### in 2014
+      ###### in 2014
 
       ")
   svyby(~age_p,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
@@ -840,7 +840,7 @@ cat("###########################################################################
 ################################################################################
 
       
-      Average level of unemployment by SMI status
+    Average level of unemployment by SMI status
            0 = Had job last week
            1 = No job last week, had job past 12 months
            2 = No job last week, no job past 12 months
@@ -865,8 +865,7 @@ cat("###########################################################################
 ################################################################################
       
       
-      
-      Among people with any insurance, what % were covered via medicaid or medicare?
+    Among people with any insurance, what % were covered via medicaid or medicare?
       
       ###### in ",year,"
       
@@ -898,6 +897,7 @@ cat("###########################################################################
   
 cat("
   
+
   #############################
   # What predicts SMI? (2014) #
   #############################
@@ -918,6 +918,7 @@ cat("
   
   cat("
   
+
   #######################################
   # Who is seeking MH treatment? (2014) #
   #######################################
@@ -940,6 +941,7 @@ cat("
   
   cat("
   
+
   ####################################
   # Who has health insurance? (2014) #
   ####################################
@@ -960,6 +962,7 @@ cat("
 
   
   cat("
+
 
   ################################################################################
   # Among those insured, who has public insurance (medicaid or medicare)? (2014) #
@@ -988,6 +991,7 @@ cat("
   rm(psa.impCovPost)
   cat("
 ################################################################################
+
 
  #####################
  #### Differences in differences (DIDs) for health insurance coverage (SMI v. no-SMI).
@@ -1095,6 +1099,7 @@ cat("
 
 ################################################################################
 
+
  ###############  
  #### DIDs for seeing mental health clinician in past 12 months (SMI v. no-SMI) 
  ########       
@@ -1141,8 +1146,13 @@ cat("
   
   cat("
       
+################################################################################
+      
+      ###############  
+      #### DID for racial disparity in health coverage
+      #### Things got a little better
+      ########  
 
-DID for racial disparity in health coverage
       
       ")
   
