@@ -45,8 +45,10 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   minimumAge <- 18
   maximumAge <- 65
   
-  #use this as a 'greater than or equal to' cutoff to determine who counts as distressed. 
-  #Most common cut-off is 13 for SMI, see Kessler et al 2010 http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
+  #use this as a 'greater than or equal to' cutoff for the K6 
+  #to determine who counts as distressed. Most common cut-off is 13 for SMI, 
+  # see Kessler et al 2010 
+  # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
   SMIthreshold <- 13
   
   ## Select the analysis variables that you're interested in
@@ -68,10 +70,13 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       
       # analysis variables: you can change these
       "age_p",       # age, continuous (native to dataset)
-      "SMI" ,        # K6 >= SMIthreshold, 0 = No SMI, 1 = SMI
+      "K6",          # K6 Serious Psychological Distress score, continuous, 0-24
+      "SMI" ,        # K6 >= SMIthreshold, 0 = No Serious Mental Illness (SMI), 1 = SMI
       "YEAR",        # Survey year, 0 = Pre, 1 = Post, recoded later
-      "coverage",    # Health insurance coverage, 0 = Not covered at time of survey, 1 = covered
-      "povrati3",    # Earnings / poverty line, continous, native to dataset, e.g., 1 = at poverty line, 1.33 = 133% poverty line
+      "coverage",    # Health insurance coverage, 0 = Not covered at time of 
+                     # survey, 1 = covered
+      "povrati3",    # Earnings / poverty line, continous, native to dataset, 
+                     # e.g., 1 = at poverty line, 1.33 = 133% poverty line
       "fine.povcat", # Poverty in four categories 
       "above.138",   # 0 = Below 138% poverty line, 1 = Above
       "sex",         # 1 = Male, 2 = Female (native to dataset)
@@ -79,8 +84,10 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       "WHITE",       # 0 = non-White, 1 = White
       "educ1",       # Level of education, ordinal, ranges from 0-21
       "PublicInsurance",  # 1 = Covered by medicaid or medicare, 0 = Anyone else
-      "Unemployment",     # level of unemployment, ordinal, 0 = Had job last week, 1 = No job last week, had job past 12 months  2 = No job last week, no job past 12 months, 3 = Never worked
-      "K6"                # K6 score, continuous, 0-24
+      "Unemployment"      # level of unemployment, ordinal, 0 = Had job last week, 
+                                                          # 1 = No job last week, had job past 12 months  
+                                                          # 2 = No job last week, no job past 12 months, 
+                                                          # 3 = Never worked
     
     )
   
@@ -375,7 +382,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       id = ~psu_p , 
       strata = ~strat_p ,
       nest = TRUE ,
-      weights = ~wtfa_sa,  # note the change in the weighting variable
+      weights = ~wtfa_sa,  
       data = imputationList( list( x1post , x2post , x3post , x4post , x5post ) )
     )
   #restrict to specified age range
@@ -552,7 +559,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     
       )
      
-  }else{ # Recode pre-2009 variables within these brackets
+  }else{ # Recode pre-2010 variables within these brackets
     y <- 
       transform( 
         y , 
@@ -810,7 +817,8 @@ cat("###########################################################################
   
   ## Plot income on K6 score
   ## Note: plots like these won't show up on your .txt sink file,
-  ## but they'll pop up while the script is running and keep you
+  ## but they'll pop up while the script is running to give you 
+  ## something to look at while you wait
   svyplot(povrati3~K6, 
           design=psa.Post, 
           style="transparent",
