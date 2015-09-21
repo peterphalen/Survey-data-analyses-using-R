@@ -61,34 +61,28 @@ as.character(SMI)Serious Psych Distress (SMI) 0.034101 0.0013
 
      ###### in 2010 
 
-                                              as.character(SMI) factor(coverage)Not covered now
-No Serious Distress                   No Serious Distress                       0.2145664
-Serious Psych Distress (SMI) Serious Psych Distress (SMI)                       0.3040341
-                             factor(coverage)Covered now ci_l.factor(coverage)Not covered now
-No Serious Distress                            0.7854336                            0.2070142
-Serious Psych Distress (SMI)                   0.6959659                            0.2667098
-                             ci_l.factor(coverage)Covered now ci_u.factor(coverage)Not covered now
-No Serious Distress                                 0.7778813                            0.2221187
-Serious Psych Distress (SMI)                        0.6586416                            0.3413584
-                             ci_u.factor(coverage)Covered now
-No Serious Distress                                 0.7929858
-Serious Psych Distress (SMI)                        0.7332902
+                                              as.character(SMI) factor(coverage)Not covered now factor(coverage)Covered now
+No Serious Distress                   No Serious Distress                       0.2114765                   0.7885235
+Serious Psych Distress (SMI) Serious Psych Distress (SMI)                       0.3018618                   0.6981382
+                             ci_l.factor(coverage)Not covered now ci_l.factor(coverage)Covered now
+No Serious Distress                                     0.2039500                        0.7809969
+Serious Psych Distress (SMI)                            0.2646915                        0.6609679
+                             ci_u.factor(coverage)Not covered now ci_u.factor(coverage)Covered now
+No Serious Distress                                     0.2190031                        0.7960500
+Serious Psych Distress (SMI)                            0.3390321                        0.7353085
 
 
       ###### in 2014 
 
-                                              as.character(SMI) factor(coverage)Not covered now
-No Serious Distress                   No Serious Distress                       0.1650644
-Serious Psych Distress (SMI) Serious Psych Distress (SMI)                       0.2465956
-                             factor(coverage)Covered now ci_l.factor(coverage)Not covered now
-No Serious Distress                            0.8349356                            0.1581413
-Serious Psych Distress (SMI)                   0.7534044                            0.2099932
-                             ci_l.factor(coverage)Covered now ci_u.factor(coverage)Not covered now
-No Serious Distress                                 0.8280125                            0.1719875
-Serious Psych Distress (SMI)                        0.7168020                            0.2831980
-                             ci_u.factor(coverage)Covered now
-No Serious Distress                                 0.8418587
-Serious Psych Distress (SMI)                        0.7900068
+                                              as.character(SMI) factor(coverage)Not covered now factor(coverage)Covered now
+No Serious Distress                   No Serious Distress                       0.1600308                   0.8399692
+Serious Psych Distress (SMI) Serious Psych Distress (SMI)                       0.2438429                   0.7561571
+                             ci_l.factor(coverage)Not covered now ci_l.factor(coverage)Covered now
+No Serious Distress                                     0.1532556                        0.8331941
+Serious Psych Distress (SMI)                            0.2070087                        0.7193230
+                             ci_u.factor(coverage)Not covered now ci_u.factor(coverage)Covered now
+No Serious Distress                                     0.1668059                        0.8467444
+Serious Psych Distress (SMI)                            0.2806770                        0.7929913
 
 ################################################################################
 
@@ -97,27 +91,27 @@ Serious Psych Distress (SMI)                        0.7900068
     ###### in  2010 
       
                                               as.character(SMI) factor(ahcsyr1)No mh prof factor(ahcsyr1)Saw mh prof
-No Serious Distress                   No Serious Distress                 0.9275888                 0.07241118
-Serious Psych Distress (SMI) Serious Psych Distress (SMI)                 0.6270262                 0.37297382
-                             ci_l.factor(ahcsyr1)No mh prof ci_l.factor(ahcsyr1)Saw mh prof
-No Serious Distress                               0.9230488                       0.0678712
-Serious Psych Distress (SMI)                      0.5883943                       0.3343419
-                             ci_u.factor(ahcsyr1)No mh prof ci_u.factor(ahcsyr1)Saw mh prof
-No Serious Distress                               0.9321288                      0.07695116
-Serious Psych Distress (SMI)                      0.6656581                      0.41160569
+No Serious Distress                   No Serious Distress                 0.9267121                 0.07328792
+Serious Psych Distress (SMI) Serious Psych Distress (SMI)                 0.6210039                 0.37899606
+                             ci_l.factor(ahcsyr1)No mh prof ci_l.factor(ahcsyr1)Saw mh prof ci_u.factor(ahcsyr1)No mh prof
+No Serious Distress                               0.9221449                      0.06872075                      0.9312793
+Serious Psych Distress (SMI)                      0.5817357                      0.33972781                      0.6602722
+                             ci_u.factor(ahcsyr1)Saw mh prof
+No Serious Distress                                0.0778551
+Serious Psych Distress (SMI)                       0.4182643
 
       
       ###### in 2014 
 
                                               as.character(SMI) factor(ahcsyr1)No mh prof factor(ahcsyr1)Saw mh prof
-No Serious Distress                   No Serious Distress                 0.9310448                 0.06895522
+No Serious Distress                   No Serious Distress                 0.9310062                 0.06899381
 Serious Psych Distress (SMI) Serious Psych Distress (SMI)                 0.6462181                 0.35378190
-                             ci_l.factor(ahcsyr1)No mh prof ci_l.factor(ahcsyr1)Saw mh prof
-No Serious Distress                               0.9256357                      0.06354613
-Serious Psych Distress (SMI)                      0.6057299                      0.31329373
-                             ci_u.factor(ahcsyr1)No mh prof ci_u.factor(ahcsyr1)Saw mh prof
-No Serious Distress                               0.9364539                       0.0743643
-Serious Psych Distress (SMI)                      0.6867063                       0.3942701
+                             ci_l.factor(ahcsyr1)No mh prof ci_l.factor(ahcsyr1)Saw mh prof ci_u.factor(ahcsyr1)No mh prof
+No Serious Distress                               0.9255935                       0.0635811                      0.9364189
+Serious Psych Distress (SMI)                      0.6057299                       0.3132937                      0.6867063
+                             ci_u.factor(ahcsyr1)Saw mh prof
+No Serious Distress                               0.07440652
+Serious Psych Distress (SMI)                      0.39427006
 
 ################################################################################
 
@@ -132,16 +126,11 @@ Serious Psych Distress (SMI)                      0.6867063                     
     svymean, na.rm = T))
       MIcombine.default(with(psa.impPre, svyby(~factor(above.138), 
     ~as.character(SMI), svymean, na.rm = T)))
-                                                                        results          se    (lower    upper)
-No Serious Distress:factor(above.138)In poverty                       0.2035424 0.004468004 0.1947838 0.2123010
-Serious Psych Distress (SMI):factor(above.138)In poverty              0.4439961 0.020689611 0.4033368 0.4846553
-No Serious Distress:factor(above.138)Above 138% poverty line          0.7964576 0.004468004 0.7876990 0.8052162
-Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line 0.5560039 0.020689611 0.5153447 0.5966632
-                                                                      missInfo
-No Serious Distress:factor(above.138)In poverty                            2 %
-Serious Psych Distress (SMI):factor(above.138)In poverty                  10 %
-No Serious Distress:factor(above.138)Above 138% poverty line               2 %
-Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line     10 %
+                                                                        results          se    (lower    upper) missInfo
+No Serious Distress:factor(above.138)In poverty                       0.2035424 0.004468004 0.1947838 0.2123010      2 %
+Serious Psych Distress (SMI):factor(above.138)In poverty              0.4439961 0.020689611 0.4033368 0.4846553     10 %
+No Serious Distress:factor(above.138)Above 138% poverty line          0.7964576 0.004468004 0.7876990 0.8052162      2 %
+Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line 0.5560039 0.020689611 0.5153447 0.5966632     10 %
 
       
       ###### in 2014 
@@ -151,16 +140,11 @@ Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line     10 %
     svymean, na.rm = T))
       MIcombine.default(with(psa.impPost, svyby(~factor(above.138), 
     ~as.character(SMI), svymean, na.rm = T)))
-                                                                        results         se    (lower    upper)
-No Serious Distress:factor(above.138)In poverty                       0.2107821 0.00438613 0.2021852 0.2193791
-Serious Psych Distress (SMI):factor(above.138)In poverty              0.5045048 0.02271071 0.4599757 0.5490338
-No Serious Distress:factor(above.138)Above 138% poverty line          0.7892179 0.00438613 0.7806209 0.7978148
-Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line 0.4954952 0.02271071 0.4509662 0.5400243
-                                                                      missInfo
-No Serious Distress:factor(above.138)In poverty                            1 %
-Serious Psych Distress (SMI):factor(above.138)In poverty                   4 %
-No Serious Distress:factor(above.138)Above 138% poverty line               1 %
-Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line      4 %
+                                                                        results         se    (lower    upper) missInfo
+No Serious Distress:factor(above.138)In poverty                       0.2107821 0.00438613 0.2021852 0.2193791      1 %
+Serious Psych Distress (SMI):factor(above.138)In poverty              0.5045048 0.02271071 0.4599757 0.5490338      4 %
+No Serious Distress:factor(above.138)Above 138% poverty line          0.7892179 0.00438613 0.7806209 0.7978148      1 %
+Serious Psych Distress (SMI):factor(above.138)Above 138% poverty line 0.4954952 0.02271071 0.4509662 0.5400243      4 %
 
 ################################################################################
 
@@ -214,12 +198,12 @@ Serious Psych Distress (SMI) Serious Psych Distress (SMI)    1.2194424 1.1348378
                                               as.character(SMI) factor(PublicInsurance)0 factor(PublicInsurance)1
 No Serious Distress                   No Serious Distress                0.8755257                0.1244743
 Serious Psych Distress (SMI) Serious Psych Distress (SMI)                0.5433182                0.4566818
-                             ci_l.factor(PublicInsurance)0 ci_l.factor(PublicInsurance)1
-No Serious Distress                              0.8686559                     0.1176045
-Serious Psych Distress (SMI)                     0.4945961                     0.4079598
-                             ci_u.factor(PublicInsurance)0 ci_u.factor(PublicInsurance)1
-No Serious Distress                              0.8823955                     0.1313441
-Serious Psych Distress (SMI)                     0.5920402                     0.5054039
+                             ci_l.factor(PublicInsurance)0 ci_l.factor(PublicInsurance)1 ci_u.factor(PublicInsurance)0
+No Serious Distress                              0.8686559                     0.1176045                     0.8823955
+Serious Psych Distress (SMI)                     0.4945961                     0.4079598                     0.5920402
+                             ci_u.factor(PublicInsurance)1
+No Serious Distress                              0.1313441
+Serious Psych Distress (SMI)                     0.5054039
 
       
       ###### in 2014 
@@ -227,12 +211,12 @@ Serious Psych Distress (SMI)                     0.5920402                     0
                                               as.character(SMI) factor(PublicInsurance)0 factor(PublicInsurance)1
 No Serious Distress                   No Serious Distress                0.8503446                0.1496554
 Serious Psych Distress (SMI) Serious Psych Distress (SMI)                0.4919829                0.5080171
-                             ci_l.factor(PublicInsurance)0 ci_l.factor(PublicInsurance)1
-No Serious Distress                              0.8427182                     0.1420289
-Serious Psych Distress (SMI)                     0.4463853                     0.4624194
-                             ci_u.factor(PublicInsurance)0 ci_u.factor(PublicInsurance)1
-No Serious Distress                              0.8579711                     0.1572818
-Serious Psych Distress (SMI)                     0.5375806                     0.5536147
+                             ci_l.factor(PublicInsurance)0 ci_l.factor(PublicInsurance)1 ci_u.factor(PublicInsurance)0
+No Serious Distress                              0.8427182                     0.1420289                     0.8579711
+Serious Psych Distress (SMI)                     0.4463853                     0.4624194                     0.5375806
+                             ci_u.factor(PublicInsurance)1
+No Serious Distress                              0.1572818
+Serious Psych Distress (SMI)                     0.5536147
 
   
 
@@ -263,20 +247,23 @@ Unemployment              0.38640015 0.036635404  0.31459580  0.458204493      0
   
   Multiple imputation results:
       with(psa.impPost, svyglm(factor(ahcsyr1) ~ povrati3 + as.character(WHITE) + 
-    as.character(sex) + educ1 + age_p + Unemployment + as.character(SMI), 
-    family = quasibinomial()))
+    as.character(sex) + educ1 + age_p + Unemployment + as.character(coverage) + 
+    as.character(SMI), family = quasibinomial()))
       MIcombine.default(with(psa.impPost, svyglm(factor(ahcsyr1) ~ 
     povrati3 + as.character(WHITE) + as.character(sex) + educ1 + 
-        age_p + Unemployment + as.character(SMI), family = quasibinomial())))
+        age_p + Unemployment + as.character(coverage) + as.character(SMI), 
+    family = quasibinomial())))
+
                                                    results          se      (lower       upper) missInfo
-(Intercept)                                   -4.409206769 0.232760017 -4.86540826 -3.953005275      0 %
-povrati3                                      -0.041924774 0.013619406 -0.06862246 -0.015227087      2 %
-as.character(WHITE)White                       0.521667585 0.089005865  0.34721929  0.696115876      0 %
-as.character(sex)Male                         -0.307489105 0.091665051 -0.48714930 -0.127828906      0 %
-educ1                                          0.113905491 0.010728439  0.09287796  0.134933022      1 %
-age_p                                         -0.007829256 0.003227554 -0.01415515 -0.001503366      0 %
-Unemployment                                   0.336984813 0.033408026  0.27150628  0.402463348      0 %
-as.character(SMI)Serious Psych Distress (SMI)  1.940749169 0.102970652  1.73893039  2.142567948      0 %
+(Intercept)                                   -4.035696574 0.242229500 -4.51045768 -3.560935464      0 %
+povrati3                                      -0.060069905 0.013848308 -0.08721224 -0.032927572      0 %
+as.character(WHITE)White                       0.522076280 0.087651610  0.35028228  0.693870281      0 %
+as.character(sex)Male                         -0.300810890 0.091525203 -0.48019699 -0.121424788      0 %
+educ1                                          0.101016733 0.010910129  0.07963327  0.122400196      0 %
+age_p                                         -0.008053168 0.003161972 -0.01425052 -0.001855817      0 %
+Unemployment                                   0.329663579 0.033546801  0.26391306  0.395414102      0 %
+as.character(coverage)Not covered now         -0.874286781 0.137085779 -1.14296997 -0.605603590      0 %
+as.character(SMI)Serious Psych Distress (SMI)  1.988654213 0.105094052  1.78267366  2.194634770      0 %
 
   
 
@@ -291,15 +278,15 @@ as.character(SMI)Serious Psych Distress (SMI)  1.940749169 0.102970652  1.738930
       MIcombine.default(with(psa.impPost, svyglm(factor(coverage) ~ 
     povrati3 + educ1 + as.character(WHITE) + as.character(sex) + 
         age_p + Unemployment + as.character(SMI), family = quasibinomial())))
-                                                  results          se       (lower      upper) missInfo
-(Intercept)                                   -1.65978833 0.146584677 -1.947089213 -1.37248744      0 %
-povrati3                                       0.35566083 0.018953763  0.318506944  0.39281472      2 %
-educ1                                          0.13205154 0.007714368  0.116931646  0.14717144      0 %
-as.character(WHITE)White                      -0.10002131 0.059536442 -0.216710755  0.01666814      0 %
-as.character(sex)Male                         -0.32284174 0.046999136 -0.414958394 -0.23072509      0 %
-age_p                                          0.01239542 0.001974527  0.008525398  0.01626545      0 %
-Unemployment                                   0.12274382 0.024695666  0.074341055  0.17114658      0 %
-as.character(SMI)Serious Psych Distress (SMI) -0.05097704 0.110778907 -0.268099853  0.16614578      0 %
+                                                  results          se       (lower        upper) missInfo
+(Intercept)                                   -1.60439038 0.149800439 -1.897993877 -1.3107868920      0 %
+povrati3                                       0.36672221 0.018348607  0.330745465  0.4026989556      4 %
+educ1                                          0.13275694 0.007852581  0.117366152  0.1481477343      0 %
+as.character(WHITE)White                      -0.11851797 0.060684948 -0.237458570  0.0004226259      0 %
+as.character(sex)Male                         -0.32488588 0.046774359 -0.416561983 -0.2332097859      0 %
+age_p                                          0.01138258 0.001911550  0.007636005  0.0151291473      0 %
+Unemployment                                   0.12444864 0.024907340  0.075630743  0.1732665383      1 %
+as.character(SMI)Serious Psych Distress (SMI) -0.06070237 0.112453103 -0.281106616  0.1597018692      0 %
 
 
 
@@ -314,6 +301,8 @@ as.character(SMI)Serious Psych Distress (SMI) -0.05097704 0.110778907 -0.2680998
       MIcombine.default(with(psa.impCovPost, svyglm(factor(PublicInsurance) ~ 
     povrati3 + educ1 + as.character(WHITE) + as.character(sex) + 
         age_p + Unemployment + as.character(SMI), family = quasibinomial())))
+
+
                                                   results          se       (lower      upper) missInfo
 (Intercept)                                    1.33333143 0.212551142  0.916732222  1.74993064      1 %
 povrati3                                      -0.77906679 0.035132018 -0.847970762 -0.71016281      5 %
@@ -323,6 +312,8 @@ as.character(sex)Male                         -0.24986716 0.063516701 -0.3743588
 age_p                                          0.01193719 0.002519580  0.006998451  0.01687592      2 %
 Unemployment                                   0.68306101 0.029943457  0.624372837  0.74174918      0 %
 as.character(SMI)Serious Psych Distress (SMI)  0.65745948 0.135995560  0.390908384  0.92401057      1 %
+
+
 
 ################################################################################
 
@@ -349,14 +340,14 @@ subset(psa.noImp, age_p >= minimumAge & age_p < maximumAge)
 
 Coefficients:
                                                                       Estimate Std. Error t value Pr(>|t|)    
-(Intercept)                                                           1.785434   0.003853 463.357  < 2e-16 ***
-as.character(SMI)Serious Psych Distress (SMI)                        -0.089468   0.019465  -4.596 6.37e-06 ***
-as.character(YEAR)2014                                                0.049502   0.004918  10.065  < 2e-16 ***
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.007936   0.025336   0.313    0.754    
+(Intercept)                                                           1.788523   0.003840 465.745  < 2e-16 ***
+as.character(SMI)Serious Psych Distress (SMI)                        -0.090385   0.019408  -4.657 4.84e-06 ***
+as.character(YEAR)2014                                                0.051446   0.004840  10.630  < 2e-16 ***
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.006573   0.025287   0.260    0.795    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-(Dispersion parameter for gaussian family taken to be 0.1549494)
+(Dispersion parameter for gaussian family taken to be 0.1522725)
 
 Number of Fisher Scoring iterations: 2
 
@@ -376,28 +367,33 @@ Number of Fisher Scoring iterations: 2
     educ1 + povrati3 + as.character(WHITE) + as.character(sex) + 
         age_p + Unemployment + as.character(SMI) + as.character(YEAR) + 
         as.character(SMI):as.character(YEAR))))
-                                                                           results           se       (lower
-(Intercept)                                                           1.2792198386 0.0161456348  1.247574927
-educ1                                                                 0.0222297836 0.0008515732  0.020560706
-povrati3                                                              0.0265589632 0.0008235142  0.024942738
-as.character(WHITE)White                                              0.0003517885 0.0058937322 -0.011199723
-as.character(sex)Male                                                -0.0449187571 0.0043633209 -0.053470711
-age_p                                                                 0.0021227293 0.0001844185  0.001761274
-Unemployment                                                          0.0026294491 0.0026580977 -0.002580360
-as.character(SMI)Serious Psych Distress (SMI)                        -0.0231806262 0.0187325779 -0.059895818
-as.character(YEAR)2014                                                0.0463363064 0.0044624860  0.037589966
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.0149896862 0.0244167847 -0.032866370
-                                                                           upper) missInfo
-(Intercept)                                                           1.310864750      0 %
-educ1                                                                 0.023898861      1 %
-povrati3                                                              0.028175188      7 %
-as.character(WHITE)White                                              0.011903300      0 %
-as.character(sex)Male                                                -0.036366803      0 %
-age_p                                                                 0.002484184      0 %
-Unemployment                                                          0.007839258      0 %
-as.character(SMI)Serious Psych Distress (SMI)                         0.013534566      0 %
-as.character(YEAR)2014                                                0.055082647      0 %
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.062845743      0 %
+                                                                           results           se       (lower       upper)
+(Intercept)                                                           1.2873351770 0.0163452371  1.255299061  1.319371293
+educ1                                                                 0.0222566249 0.0008630735  0.020565010  0.023948240
+povrati3                                                              0.0264689950 0.0007960420  0.024906299  0.028031691
+as.character(WHITE)White                                             -0.0008858272 0.0058527666 -0.012357047  0.010585393
+as.character(sex)Male                                                -0.0445834979 0.0043703214 -0.053149173 -0.036017823
+age_p                                                                 0.0020131440 0.0001795663  0.001661199  0.002365089
+Unemployment                                                          0.0024708059 0.0026381161 -0.002699850  0.007641462
+as.character(SMI)Serious Psych Distress (SMI)                        -0.0224972830 0.0186681594 -0.059086206  0.014091640
+as.character(YEAR)2014                                                0.0480055375 0.0043833832  0.039414246  0.056596829
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.0126285556 0.0243270915 -0.035051677  0.060308788
+
+
+
+
+
+                                                                     missInfo
+(Intercept)                                                               0 %
+educ1                                                                     1 %
+povrati3                                                                  7 %
+as.character(WHITE)White                                                  0 %
+as.character(sex)Male                                                     0 %
+age_p                                                                     0 %
+Unemployment                                                              1 %
+as.character(SMI)Serious Psych Distress (SMI)                             0 %
+as.character(YEAR)2014                                                    0 %
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      0 %
 
 ################################################################################
       
@@ -411,16 +407,11 @@ Multiple imputation results:
     as.character(YEAR) + as.character(SMI):as.character(YEAR)))
       MIcombine.default(with(psa.impCov, svyglm(as.numeric(PublicInsurance) ~ 
     as.character(SMI) + as.character(YEAR) + as.character(SMI):as.character(YEAR))))
-                                                                        results          se      (lower     upper)
-(Intercept)                                                          0.12447427 0.003505060  0.11760448 0.13134406
-as.character(SMI)Serious Psych Distress (SMI)                        0.33220756 0.024497151  0.28419403 0.38022109
-as.character(YEAR)2014                                               0.02518110 0.004479953  0.01640055 0.03396165
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 0.02615413 0.034462530 -0.04139118 0.09369945
-                                                                     missInfo
-(Intercept)                                                               0 %
-as.character(SMI)Serious Psych Distress (SMI)                             0 %
-as.character(YEAR)2014                                                    0 %
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      0 %
+                                                                        results          se      (lower     upper) missInfo
+(Intercept)                                                          0.12447427 0.003505060  0.11760448 0.13134406      0 %
+as.character(SMI)Serious Psych Distress (SMI)                        0.33220756 0.024497151  0.28419403 0.38022109      0 %
+as.character(YEAR)2014                                               0.02518110 0.004479953  0.01640055 0.03396165      0 %
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 0.02615413 0.034462530 -0.04139118 0.09369945      0 %
 
 
       ###############  
@@ -436,28 +427,28 @@ as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      0 %
     educ1 + povrati3 + as.character(WHITE) + as.character(sex) + 
         age_p + Unemployment + as.character(SMI) + as.character(YEAR) + 
         as.character(SMI):as.character(YEAR))))
-                                                                           results           se        (lower
-(Intercept)                                                           0.4809337717 0.0178207604  0.4460056019
-educ1                                                                -0.0179331980 0.0008538134 -0.0196066869
-povrati3                                                             -0.0258100800 0.0007803598 -0.0273414822
-as.character(WHITE)White                                             -0.0475140380 0.0052103615 -0.0577261781
-as.character(sex)Male                                                -0.0182543861 0.0041618648 -0.0264114950
-age_p                                                                 0.0006480749 0.0001800699  0.0002951434
-Unemployment                                                          0.1137960934 0.0034159992  0.1071008530
-as.character(SMI)Serious Psych Distress (SMI)                         0.1579034117 0.0203364230  0.1180447505
-as.character(YEAR)2014                                                0.0211817987 0.0040188022  0.0133050402
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.0234197441 0.0284572753 -0.0323555209
-                                                                           upper) missInfo
-(Intercept)                                                           0.515861942      0 %
-educ1                                                                -0.016259709      1 %
-povrati3                                                             -0.024278678      7 %
-as.character(WHITE)White                                             -0.037301898      0 %
-as.character(sex)Male                                                -0.010097277      0 %
-age_p                                                                 0.001001006      0 %
-Unemployment                                                          0.120491334      0 %
-as.character(SMI)Serious Psych Distress (SMI)                         0.197762073      0 %
-as.character(YEAR)2014                                                0.029058557      0 %
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.079195009      0 %
+                                                                           results           se        (lower       upper)
+(Intercept)                                                           0.4809337717 0.0178207604  0.4460056019  0.515861942
+educ1                                                                -0.0179331980 0.0008538134 -0.0196066869 -0.016259709
+povrati3                                                             -0.0258100800 0.0007803598 -0.0273414822 -0.024278678
+as.character(WHITE)White                                             -0.0475140380 0.0052103615 -0.0577261781 -0.037301898
+as.character(sex)Male                                                -0.0182543861 0.0041618648 -0.0264114950 -0.010097277
+age_p                                                                 0.0006480749 0.0001800699  0.0002951434  0.001001006
+Unemployment                                                          0.1137960934 0.0034159992  0.1071008530  0.120491334
+as.character(SMI)Serious Psych Distress (SMI)                         0.1579034117 0.0203364230  0.1180447505  0.197762073
+as.character(YEAR)2014                                                0.0211817987 0.0040188022  0.0133050402  0.029058557
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  0.0234197441 0.0284572753 -0.0323555209  0.079195009
+                                                                     missInfo
+(Intercept)                                                               0 %
+educ1                                                                     1 %
+povrati3                                                                  7 %
+as.character(WHITE)White                                                  0 %
+as.character(sex)Male                                                     0 %
+age_p                                                                     0 %
+Unemployment                                                              0 %
+as.character(SMI)Serious Psych Distress (SMI)                             0 %
+as.character(YEAR)2014                                                    0 %
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      0 %
 
 
 ################################################################################
@@ -477,14 +468,14 @@ subset(psa.noImp, age_p >= minimumAge & age_p < maximumAge)
 
 Coefficients:
                                                                       Estimate Std. Error t value Pr(>|t|)    
-(Intercept)                                                           1.072411   0.002316 462.973   <2e-16 ***
-as.character(SMI)Serious Psych Distress (SMI)                         0.300563   0.019975  15.047   <2e-16 ***
-as.character(YEAR)2014                                               -0.003456   0.003734  -0.926    0.355    
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.015736   0.030279  -0.520    0.604    
+(Intercept)                                                           1.073288   0.002330 460.592   <2e-16 ***
+as.character(SMI)Serious Psych Distress (SMI)                         0.305708   0.020296  15.062   <2e-16 ***
+as.character(YEAR)2014                                               -0.004294   0.003749  -1.145    0.253    
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.020920   0.030451  -0.687    0.493    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-(Dispersion parameter for gaussian family taken to be 0.07152081)
+(Dispersion parameter for gaussian family taken to be 0.07187556)
 
 Number of Fisher Scoring iterations: 2
 
@@ -499,34 +490,36 @@ Number of Fisher Scoring iterations: 2
       
       Multiple imputation results:
       with(psa.imp, svyglm(as.numeric(ahcsyr1) ~ povrati3 + as.character(WHITE) + 
-    as.character(sex) + age_p + educ1 + Unemployment + as.character(SMI) + 
-    as.character(YEAR) + as.character(SMI):as.character(YEAR)))
+    as.character(sex) + age_p + educ1 + Unemployment + as.character(coverage) + 
+    as.character(SMI) + as.character(YEAR) + as.character(SMI):as.character(YEAR)))
       MIcombine.default(with(psa.imp, svyglm(as.numeric(ahcsyr1) ~ 
     povrati3 + as.character(WHITE) + as.character(sex) + age_p + 
-        educ1 + Unemployment + as.character(SMI) + as.character(YEAR) + 
-        as.character(SMI):as.character(YEAR))))
-                                                                           results           se        (lower
-(Intercept)                                                           0.9689320905 0.0094614142  0.9503880503
-povrati3                                                             -0.0011501980 0.0006180642 -0.0023617196
-as.character(WHITE)White                                              0.0341155394 0.0033081659  0.0276316531
-as.character(sex)Male                                                -0.0221288157 0.0039590862 -0.0298884822
-age_p                                                                -0.0003615506 0.0001570631 -0.0006693886
-educ1                                                                 0.0060274741 0.0004291362  0.0051863750
-Unemployment                                                          0.0256862506 0.0017827738  0.0221920779
-as.character(SMI)Serious Psych Distress (SMI)                         0.2903986725 0.0199402501  0.2513165005
-as.character(YEAR)2014                                               -0.0027595828 0.0036866728 -0.0099853288
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.0150746523 0.0298363009 -0.0735527274
-                                                                            upper) missInfo
-(Intercept)                                                           9.874761e-01      0 %
-povrati3                                                              6.132354e-05      2 %
-as.character(WHITE)White                                              4.059943e-02      0 %
-as.character(sex)Male                                                -1.436915e-02      0 %
-age_p                                                                -5.371256e-05      0 %
-educ1                                                                 6.868573e-03      1 %
-Unemployment                                                          2.918042e-02      0 %
-as.character(SMI)Serious Psych Distress (SMI)                         3.294808e-01      0 %
-as.character(YEAR)2014                                                4.466163e-03      0 %
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014  4.340342e-02      0 %
+        educ1 + Unemployment + as.character(coverage) + as.character(SMI) + 
+        as.character(YEAR) + as.character(SMI):as.character(YEAR))))
+                                                                           results           se        (lower        upper)
+(Intercept)                                                           1.0030470409 0.0100638301  0.9833222959  1.0227717859
+povrati3                                                             -0.0026576498 0.0006240639 -0.0038808337 -0.0014344659
+as.character(WHITE)White                                              0.0343777940 0.0032438717  0.0280199223  0.0407356658
+as.character(sex)Male                                                -0.0204800084 0.0039505368 -0.0282229182 -0.0127370986
+age_p                                                                -0.0004115492 0.0001565897 -0.0007184593 -0.0001046391
+educ1                                                                 0.0049714771 0.0004349170  0.0041190542  0.0058239000
+Unemployment                                                          0.0255152075 0.0017848360  0.0220169931  0.0290134219
+as.character(coverage)Not covered now                                -0.0499453761 0.0039331384 -0.0576541865 -0.0422365657
+as.character(SMI)Serious Psych Distress (SMI)                         0.2975102532 0.0201223771  0.2580711189  0.3369493875
+as.character(YEAR)2014                                               -0.0062001976 0.0036572268 -0.0133682304  0.0009678353
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.0205734156 0.0300201790 -0.0794118854  0.0382650541
+                                                                     missInfo
+(Intercept)                                                               0 %
+povrati3                                                                  1 %
+as.character(WHITE)White                                                  0 %
+as.character(sex)Male                                                     0 %
+age_p                                                                     0 %
+educ1                                                                     0 %
+Unemployment                                                              0 %
+as.character(coverage)Not covered now                                     0 %
+as.character(SMI)Serious Psych Distress (SMI)                             0 %
+as.character(YEAR)2014                                                    0 %
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      0 %
 
 
 ################################################################################
@@ -562,7 +555,6 @@ Number of Fisher Scoring iterations: 2
       ###############  
       #### DIDs for income (SMI v. no-SMI) 
       #### controlling for lots of variables.
-      #### Income disparity is getting worse.
       ########       
       
       Multiple imputation results:
@@ -573,26 +565,16 @@ Number of Fisher Scoring iterations: 2
     as.character(WHITE) + as.character(sex) + age_p + educ1 + 
         Unemployment + as.character(SMI) + as.character(YEAR) + 
         as.character(SMI):as.character(YEAR))))
-                                                                         results          se      (lower      upper)
-(Intercept)                                                          -3.92373868 0.099207930 -4.11820071 -3.72927666
-as.character(WHITE)White                                              0.74411801 0.039555108  0.66656916  0.82166685
-as.character(sex)Male                                                 0.18257609 0.032872821  0.11813264  0.24701954
-age_p                                                                 0.04596512 0.001430395  0.04316051  0.04876973
-educ1                                                                 0.36740444 0.005621378  0.35638660  0.37842228
-Unemployment                                                         -0.46287229 0.017115493 -0.49647788 -0.42926670
-as.character(SMI)Serious Psych Distress (SMI)                        -0.92592057 0.091166756 -1.10493700 -0.74690414
-as.character(YEAR)2014                                               -0.05403512 0.036924054 -0.12651507  0.01844484
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.24888917 0.119464904 -0.48360643 -0.01417191
-                                                                     missInfo
-(Intercept)                                                               2 %
-as.character(WHITE)White                                                  3 %
-as.character(sex)Male                                                     3 %
-age_p                                                                     4 %
-educ1                                                                     1 %
-Unemployment                                                              8 %
-as.character(SMI)Serious Psych Distress (SMI)                             8 %
-as.character(YEAR)2014                                                    7 %
-as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      9 %
+                                                                         results          se      (lower      upper) missInfo
+(Intercept)                                                          -3.92373868 0.099207930 -4.11820071 -3.72927666      2 %
+as.character(WHITE)White                                              0.74411801 0.039555108  0.66656916  0.82166685      3 %
+as.character(sex)Male                                                 0.18257609 0.032872821  0.11813264  0.24701954      3 %
+age_p                                                                 0.04596512 0.001430395  0.04316051  0.04876973      4 %
+educ1                                                                 0.36740444 0.005621378  0.35638660  0.37842228      1 %
+Unemployment                                                         -0.46287229 0.017115493 -0.49647788 -0.42926670      8 %
+as.character(SMI)Serious Psych Distress (SMI)                        -0.92592057 0.091166756 -1.10493700 -0.74690414      8 %
+as.character(YEAR)2014                                               -0.05403512 0.036924054 -0.12651507  0.01844484      7 %
+as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014 -0.24888917 0.119464904 -0.48360643 -0.01417191      9 %
 
       
 ################################################################################
@@ -610,14 +592,14 @@ as.character(SMI)Serious Psych Distress (SMI):as.character(YEAR)2014      9 %
     povrati3 + educ1 + as.character(SMI) + as.character(sex) + 
         age_p + Unemployment + as.character(WHITE) + as.character(YEAR) + 
         as.character(WHITE):as.character(YEAR))))
-                                                     results           se       (lower        upper) missInfo
-(Intercept)                                      1.269809750 0.0171796712  1.236138158  1.3034813425      0 %
-povrati3                                         0.026545126 0.0008230029  0.024929937  0.0281603160      7 %
-educ1                                            0.022234901 0.0008514511  0.020566063  0.0239037388      1 %
-as.character(SMI)Serious Psych Distress (SMI)   -0.015963309 0.0138223221 -0.043054565  0.0111279477      0 %
-as.character(sex)Male                           -0.044920132 0.0043623802 -0.053470242 -0.0363700222      0 %
-age_p                                            0.002121471 0.0001843400  0.001760170  0.0024827719      0 %
-Unemployment                                     0.002622963 0.0026586656 -0.002587959  0.0078338846      0 %
-as.character(WHITE)White                         0.011781584 0.0087450151 -0.005358337  0.0289215047      0 %
-as.character(YEAR)2014                           0.064725707 0.0099871904  0.045151172  0.0843002413      0 %
-as.character(WHITE)White:as.character(YEAR)2014 -0.022410408 0.0113477894 -0.044651673 -0.0001691429      0 %
+                                                     results           se       (lower       upper) missInfo
+(Intercept)                                      1.277318588 0.0173353840  1.243341818  1.311295358      0 %
+povrati3                                         0.026455966 0.0007956377  0.024894082  0.028017850      7 %
+educ1                                            0.022261336 0.0008628591  0.020570141  0.023952531      1 %
+as.character(SMI)Serious Psych Distress (SMI)   -0.016428252 0.0139355632 -0.043741457  0.010884953      0 %
+as.character(sex)Male                           -0.044593604 0.0043694638 -0.053157598 -0.036029610      0 %
+age_p                                            0.002012051 0.0001794891  0.001660258  0.002363844      0 %
+Unemployment                                     0.002463831 0.0026387563 -0.002708079  0.007635741      1 %
+as.character(WHITE)White                         0.011346632 0.0087500040 -0.005803067  0.028496332      0 %
+as.character(YEAR)2014                           0.067599723 0.0099055922  0.048185117  0.087014328      0 %
+as.character(WHITE)White:as.character(YEAR)2014 -0.024012891 0.0113219745 -0.046203559 -0.001822222      0 %

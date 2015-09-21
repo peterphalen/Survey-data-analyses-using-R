@@ -384,8 +384,8 @@ Recoding variables...",loopNumber)
         #### Most variables have codes for things like "Refused to answer"
         #### This block of recodes is intended to set those kinds of codes
         #### to NA
-        notcov <- ifelse(notcov < 7, notcov, NA),        
-        ahcsyr1 <- ifelse(ahcsyr1 < 7, ahcsyr1, NA) ,
+        notcov = ifelse(notcov < 7, notcov, NA),        
+        ahcsyr1 = ifelse(ahcsyr1 < 7, ahcsyr1, NA) ,
         educ1 = ifelse(educ1>22, NA, as.numeric(educ1))
       )
     
@@ -989,6 +989,7 @@ cat("
                                     educ1 +
                                     age_p +
                                     Unemployment +
+                                    as.character(coverage) +
                                     as.character(SMI) ,
                                   family=quasibinomial())
   )
@@ -1189,6 +1190,7 @@ cat("
                                                         age_p +
                                                         educ1 +
                                                         Unemployment +
+                                                        as.character(coverage) +
                                                         as.character(SMI) + 
                                                         as.character(YEAR)  +
                                                         as.character(SMI):as.character(YEAR)
@@ -1223,7 +1225,6 @@ cat("
       ###############  
       #### DIDs for income (SMI v. no-SMI) 
       #### controlling for lots of variables.
-      #### Income disparity is getting worse.
       ########       
       
       ")
