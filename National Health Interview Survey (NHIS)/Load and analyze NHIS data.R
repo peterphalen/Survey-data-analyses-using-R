@@ -1,4 +1,5 @@
 
+
 #download packages you don't have. First four are only needed for getting 
 #the data from NHIS in the first place  
 wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
@@ -30,11 +31,29 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # Analyze the National Health Interview Survey personsx, samadult, and imputed income files with R #
   #########################################################################################################
   
+
+  ########################################
+  ###        Begin user settings.       ##
+  ###  (These variables are set by you. ## 
+  ###  The rest of the code autoruns    ##
+  ###  according to these settings.)    ##
+  ########################################
+
+
+  # set working directory
+  setwd( "/Users/PeterPhalen/Google Drive/Data analysis" )
+
+
   # choose what year of data to analyze
   # note: this can be changed to any year that has already been downloaded locally
-  year <- 2014
+  # fair warning: I wrote this with reference to NHIS years 2009-2014. If you
+  # want to run this with earlier years of data you may need to adjust the variable 
+  # recoding code below to account for relevant changes in variable names and formats  
+
+  latestYear <- 2014  #2014 is currently the latest available dataset 
   comparedToYear <- 2010
   
+
   ## Minimum and maximum ages to include in dataset. 
   ## Your choice here subsets down your models/stats.
   ## If you want to use the complete data, just set 
@@ -45,16 +64,31 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   minimumAge <- 18
   maximumAge <- 65
   
+
   #use this as a 'greater than or equal to' cutoff for the K6 
   #to determine who counts as distressed. Most common cut-off is 13 for SMI, 
   # see Kessler et al 2010 
   # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
+
   SMIthreshold <- 13
   
+
+
+  # Set this to TRUE only if you have manually changed the preprocessNHISdata 
+  # function and need to force it to update (e.g., if you've just gone into 
+  # the function code below and changed how variables are calculated or formatted). 
+  # Note: If this is a new R session, don't worry about this as the script
+  # will update the preprocessing function automatically if it's not presently
+  # declared in your Global Environment.
+
+  updatePreprocessingFunction <- FALSE
+
+
+
   ## Select the analysis variables that you're interested in
   ## You need to specify these or your analyses will take 
   ## forever and/or your computer may crash
-  
+
   variables.to.keep <-
     c( 
       ## survey variables: do not alter these
@@ -91,9 +125,63 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     
     )
   
-  # set working directory
-  setwd( "/Users/PeterPhalen/Google Drive/Data analysis" )
-   
+
+    #########################################
+    ###          End user settings.        ##
+    ###     (The rest of the script can    ##
+    ###           run on its own)          ##
+    #########################################
+
+
+
+
+
+
+
+
+
+
+# If you've already got the preprocessing function in your system and
+# don't need to force it to update within a single session, this if-statement
+# saves time by skipping the function declaration 
+if (!("preprocessNHISdata" %in% ls()) | (updatePreprocessingFunction == TRUE)){
+  
+#########################################################  
+#### Create function to perform data preprocessing. ##### 
+#########################################################  
+#### This function will remain in your environment, #####
+#### so unless you need to change the recoding      #####
+#### scripts you can get away with running it just  #####
+#### once per session                               #####
+#########################################################
+
+preprocessNHISdata <- function(year, mostRecentData = TRUE){
+
+    #if the user asks to process pre-2009 data,
+    #don't stop them but throw a warning
+    if (year<2009){ 
+      warning("This script hasn't been tested on years prior to 2009")
+    }
+    
+    #For Pre-Post analyses, label the more recent dataset
+    #with 'post' and the earlier dataset with 'pre' 
+    if (mostRecentData == TRUE) {
+      prepost <- 1
+      chronology <- "post"
+    }else{
+      if (mostRecentData == FALSE){
+        prepost <- 0
+        chronology <- "pre"
+      }else{
+        stop("The mostRecentData argument must be set to either TRUE or FALSE. For Pre-Post analyses, set mostRecentData to FALSE if this is your Pre dataset, or TRUE if this is your Post dataset")
+      }
+    }
+    
+    
+    ########################################################  
+    ##########          Load data           ################ 
+    ########################################################
+    
   # set R to produce conservative standard errors instead of crashing
   # http://r-survey.r-forge.r-project.org/survey/exmample-lonely.html
   options( survey.lonely.psu = "adjust" )
@@ -104,12 +192,13 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   path.to.samadult.file <- paste( getwd() , year , "samadult.rda" , sep = "/" )
   path.to.incmimp.file <- paste( getwd() , year , "incmimp.rda" , sep = "/" )
   
-  # print those filepaths to the screen
-  print( path.to.personsx.file )
-  print( path.to.samadult.file )
-  print( path.to.incmimp.file )
+  # Tell us which filepaths we're pulling from
+  cat("Pulling from the following files: 
+",path.to.personsx.file,"
+",path.to.samadult.file,"
+",path.to.incmimp.file)
   
-  # now the "NHIS.11.personsx.df" data frame can be loaded directly
+  # now the "NHIS.[year].personsx.df" data frame can be loaded directly
   # from your local hard drive.  this is much faster.
   load( path.to.personsx.file )		# this loads a data frame called NHIS.11.personsx.df
   load( path.to.samadult.file )		# this loads a data frame called NHIS.11.samadult.df
@@ -120,7 +209,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   # construct a string containing the data frame name of the personsx data table
   # stored within the R data file (.rda)
-  # note: for 2014, this data frame will be named "NHIS.11.personsx.df"
+  # note: for 2014, this data frame will be named "NHIS.14.personsx.df"
   # but constructing it dynamically will allow analyses of other years
   # by simply changing the 'year' variable above
   df.name <- paste( "NHIS" , substr( year , 3 , 4 ) , "personsx" , "df" , sep = "." )
@@ -145,9 +234,12 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   
   ########################################################  
-  ### BEGIN DATA PREP FOR 'POST' YEAR ####################  
+  ##########       BEGIN DATA PREP        ################ 
   ######################################################## 
-  
+ 
+  # Status update
+  cat("
+Merging files...")
   
   #####################################
   # merge personsx and samadult files #
@@ -191,7 +283,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # therefore, an inner join of the two should have the same number of records as samadult
   
   # perform the actual merge
-  x.saPost <- merge( x , sa )
+  x.sa <- merge( x , sa )
   # note that the merge() function merges using all intersecting columns -
   
   # uncomment this line to see intersecting columns
@@ -202,10 +294,10 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   # throw an error if the number of records in the merged file
   # does not match the number of records in the samadult file
-  stopifnot( nrow( x.saPost ) == nrow( sa ) )
+  stopifnot( nrow( x.sa ) == nrow( sa ) )
   
   
-  # now the x.saPost data frame contains all of the rows in the samadult file and 
+  # now the x.sa data frame contains all of the rows in the samadult file and 
   # all columns from both the samadult and personsx files
   # therefore, there's no more need for the samadult file on its own
   # so delete the samadult file
@@ -245,210 +337,47 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     
     # the 2014 imputed income merge fields are currently stored as character variables
     # and should immediately be converted over to numeric types
-    merge.vars <- intersect( names( x.saPost ) , names( current.i ) )
+    merge.vars <- intersect( names( x.sa ) , names( current.i ) )
     
     # loop through all variables used in the merge
     # overwrite each column with itself, only converted to a numeric field
-    for ( j in merge.vars ) x.saPost[ , j ] <- as.numeric( x.saPost[ , j ] )
+    for ( j in merge.vars ) x.sa[ , j ] <- as.numeric( x.sa[ , j ] )
     
     
     # a handy trick to view the class of all columns within a data frame at once:
-    sapply( x.saPost , class )
-    
+    # sapply( x.sa , class )
     
     # merge the merged file with each of the five imputed income files
     y <- 
       merge( 
-        x.saPost , # the 2014 samadult-personsx merged data frame
+        x.sa , # the samadult-personsx merged data frame
         current.i # ii1 - ii5, depending on the current iteration of this loop
       )
     
     # and confirm the new data frame (merged + the current iteration of the multiply-imputed data)
     # contains the same number of records as the original merged file
-    stopifnot( nrow( x.saPost ) == nrow( y ) )
+    stopifnot( nrow( x.sa ) == nrow( y ) )
     
     
     ##############################
     # START OF VARIABLE RECODING #
     # any new variables that the user would like to create should be constructed here #
+     
+    # Status update
+    loopNumber <- paste0("imputation (",i,"/5)")
+    cat("
+Recoding variables...",loopNumber)
     
-    y <- 
-      transform(
-        y, 
-        
-        #### Most variables have codes for things like "Refused to answer"
-        #### This block of recodes is intended to set those kinds of codes
-        #### to NA   
-        povrati3 = ifelse(povrati3 == 999999, NA, povrati3), #poverty line ratio (999999 is an NA code)
-        ahcsyr1 = ifelse(ahcsyr1 < 7, ahcsyr1, NA), #seen mh prof in past 12 months        
-        notcov = ifelse(notcov < 7, notcov, NA), #Insurance coverage
-        Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA), #level of unemployment
-        educ1 = ifelse(educ1>22, NA, as.numeric(educ1)), #level of education
-        asisad = ifelse(asisad < 7, asisad, NA), #The rest are K6 components
-        asinerv = ifelse(asinerv < 7, asinerv, NA),
-        asihopls = ifelse(asihopls < 7, asihopls, NA),
-        asirstls = ifelse(asirstls < 7, asirstls, NA),
-        asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
-        asiwthls = ifelse(asiwthls < 7, asiwthls, NA)        
-      )
-    y <- 
-      transform( 
-        y , 
-                
-        # create an 'at or above 138% fpl' flag
-        # this number is significant because people below 138% of the poverty line 
-        # qualified for the medicaid expansion on January 1, 2014
-        above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1), exclude=NA)  ,
-        
-        # create a four-category poverty variable
-        fine.povcat =
-          cut( 
-            povrati3 , 
-            c( -Inf , 1.38 , 2 , 4 , Inf ) ,
-            labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
-          ),
-        
-        ## Recode variables of interest into factors and label the values
-        coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
-        ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
-        YEAR = factor(1, labels = year),
-        WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
-        sex = factor(sex, labels=c("Male", "Female")),
-        PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0))   
-      )
-    
-    y <- transform(
-      y,
-    # Calculate K6 score
-    # Note: items are scored 1-5 in this data set
-    # and need to be reverse scored and scaled to 
-    # range from 0-24
-    K6 = 
-      (5-asisad + 
-         5-asinerv + 
-         5-asihopls + 
-         5-asirstls + 
-         5-asieffrt + 
-         5-asiwthls)
-    )
+    ###############################################################
+    # IMPORTANT NOTE: Some variable names for the National Health
+    # Interview Survey have changed over time. Others have changed 
+    # slightly in terms of format. So, our calculations have to 
+    # change depending upon the year of the survey.
+    ##################################
     
     
-    y <- transform(
-      y,
-    # Code 'Serious Psychological Distress (SMI)' variable based on specified K6 threshold
-    # Note: because this recodes an already recoded variable (K6) it has to be calculated in
-    #       its own block here 
-    SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1),exclude=NA)
-    )
-  
-    # END OF VARIABLE RECODING #
-    ############################
-    
-    # save the data frames as objects x1 - x5, depending on the iteration in the loop.
-    # at the same time restrict the resulting dataset to the variables of interest 
-    # specified above. If we don't do this the script takes much, much longer.
-    assign( paste0(  'x' , i , 'post') , y[,variables.to.keep] )
-    
-    # delete the y and ii# data frames
-    y <- NULL
-    assign( paste0( "ii" , i ) , NULL )
-    
-    # garbage collection - free up RAM from recently-deleted data tables
-    gc()
-  }
-  
-  #clean up intermediary data
-  rm(current.i)
-  
-  # To minimize processing time for analyses that *don't* require multiply imputed income
-  # we want to have one dataset available that has all the recoded variables 
-  post.i <-  x1post
-  
-  #create survey design object for all the Post analyses that don't require info on income
-  psa.Post <- 
-    svydesign( 
-      id = ~psu_p , 
-      strata = ~strat_p ,
-      nest = TRUE ,
-      weights = ~wtfa_sa,  
-      data = post.i
-    )
-  #restrict to specified age range
-  psa.Post <- subset(psa.Post, age_p >= minimumAge & age_p < maximumAge)
-  
-  #create multiply imputed survey design object for Post analyses that require income info
-  psa.impPost <- 
-    svydesign( 
-      id = ~psu_p , 
-      strata = ~strat_p ,
-      nest = TRUE ,
-      weights = ~wtfa_sa,  
-      data = imputationList( list( x1post , x2post , x3post , x4post , x5post ) )
-    )
-  #restrict to specified age range
-  psa.impPost <- subset(psa.impPost, age_p >= minimumAge & age_p < maximumAge)
-  
-  ############################ 
-  ### End 'Post' data prep ###  
-  ############################ 
-  
-  
-  
-  
-  
-  
-  ################################################################################################################  
-  
-  ########################################################  
-  ### BEGIN DATA PREP FOR 'PRE' YEAR ##################### 
-  ######################################################## 
-  
-  # Now, we're going to repeat all of the above for our specified 'Pre' year
-  # instead. Because it's essentially the same process, I'm only going to 
-  # comment on the stuff that changes (mostly in the recoding steps)
-  
-  # Set the year to the comparison year that we specified above
-  year <- comparedToYear 
-  
-  path.to.incmimp.file <- paste( getwd() , year , "incmimp.rda" , sep = "/" )
-  options( survey.lonely.psu = "adjust" )
-  path.to.personsx.file <- paste( getwd() , year , "personsx.rda" , sep = "/" )
-  path.to.samadult.file <- paste( getwd() , year , "samadult.rda" , sep = "/" )
-  path.to.incmimp.file <- paste( getwd() , year , "incmimp.rda" , sep = "/" )
-  print( path.to.personsx.file )
-  print( path.to.samadult.file )
-  print( path.to.incmimp.file )
-  load( path.to.personsx.file )  
-  load( path.to.samadult.file )	
-  ls()
-  df.name <- paste( "NHIS" , substr( year , 3 , 4 ) , "personsx" , "df" , sep = "." )
-  samadult.name <- paste( "NHIS" , substr( year , 3 , 4 ) , "samadult" , "df" , sep = "." )
-  x <- get( df.name )
-  sa <- get( samadult.name ) 
-  rm( list = c( df.name , samadult.name ) )
-  gc()
-  merge.vars <- c( "hhx" , "fmx" , "fpx" )
-   columns.in.both.dfs <- intersect( names( sa ) , names( x ) ) 
-   redundant.columns <- columns.in.both.dfs[ !( columns.in.both.dfs %in% merge.vars ) ] 
-  sa <- sa[ , !( names( sa ) %in% redundant.columns ) ]
-  stopifnot( merge.vars == intersect( names( sa ) , names( x ) ) )
-  x.saPre <- merge( x , sa )
-  stopifnot( nrow( x.saPre ) == nrow( sa ) )
-  load( path.to.incmimp.file )  	
-  for ( i in 1:5 ){
-    current.i <- get( paste0("ii" , i ) )
-    merge.vars <- intersect( names( x.saPre ) , names( current.i ) )
-    for ( j in merge.vars ) x.saPre[ , j ] <- as.numeric( x.saPre[ , j ] )
-    sapply( x.saPost , class )
-    y <- 
-      merge( 
-        x.saPre , 
-        current.i 
-      )
-    stopifnot( nrow( x.saPre ) == nrow( y ) )
-    ##############################
-    # START OF VARIABLE RECODING #
-
+    # start with variables that haven't changed over the years
+    # recode them here
     y <- 
       transform( 
         y ,
@@ -463,141 +392,254 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     y <- 
       transform( 
         y , 
-        #Recode variables of interest just like we did for the 'Post' year above
+        #Recode variables of interest just like we did for the year above
         coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
-        YEAR = factor(1, labels = year),
+        
+        #these variables either don't have missing values, or the missing values are irrelevant to our analyses
+        YEAR = factor(prepost, labels = year),
         WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
         sex = factor(sex, labels=c("Male", "Female")),
         PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0))
-      )
+      )    
     
-  ###############################################################
-  # IMPORTANT NOTE: Some variable names for the National Health
-  # Interview Survey have changed over time. Others have changed 
-  # slightly in terms of format. So, our calculations have to 
-  # change depending upon the year of the survey.
-  ##################################
-  
-  
-  if (year > 2013 ){  # Recode post-2013 variables 
-                      # within these brackets 
-    y <-
-      transform(
-        y ,
-        #### set all the "I don't know" / "refused to answer" codes to NA
-        asisad = ifelse(asisad < 7, asisad, NA),
-        asinerv = ifelse(asinerv < 7, asinerv, NA),
-        asihopls = ifelse(asihopls < 7, asihopls, NA),
-        asirstls = ifelse(asirstls < 7, asirstls, NA),
-        asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
-        asiwthls = ifelse(asiwthls < 7, asiwthls, NA)
-      )
+    ## the rest of the variables we're interested in are year-dependent
     
-    y <- 
-      transform( 
-        y , 
-        K6 = 
-          # calculate K6 score
-          (5-asisad + 
-             5-asinerv + 
-             5-asihopls + 
-             5-asirstls + 
-             5-asieffrt + 
-             5-asiwthls) )
-    
-    y <- 
-      transform( 
-        y , 
-        
-        # code variable for "Serious Psychological Distress (SMI)" based on K6 score
-        SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1),exclude=NA))
-    
-    
-  }else{  # Recode pre-2013 variables within 
-          # these brackets
-    y <- 
-      transform(
-        y ,
-        #### set all the "I don't know" / "refused to answer" codes to NA
-        sad = ifelse(sad < 7, sad, NA),
-        nervous = ifelse(nervous < 7, nervous, NA),
-        hopeless = ifelse(hopeless < 7, hopeless, NA),
-        restless = ifelse(restless < 7, restless, NA),
-        effort = ifelse(effort < 7, effort, NA),
-        worthls = ifelse(worthls < 7, worthls, NA)
-        
-      )
-    
-    y <- 
-      transform(
-        y ,
-        # calculate K6 score
-        K6 = 
-          (5-sad + 
-             5-nervous + 
-             5-hopeless + 
-             5-restless + 
-             5-effort + 
-             5-worthls)     
-      )
-    
-    y <- 
-      transform( 
-        y , 
-        # code variable for "Serious Psychological Distress (SMI)" based on K6 score
-        SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1), exclude=NA)
-      )
-    
-  }
-  if (year >= 2010){  # Recode post-2010 variables within these brackets
-    y <- 
-      transform( 
-        y , 
-    povrati3 = ifelse(povrati3 == 999999, NA, povrati3/1000),
-    Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA)
-    
-      )
-     
-  }else{ # Recode pre-2010 variables within these brackets
-    y <- 
-      transform( 
-        y , 
-        povrati3 = ifelse(povrati2 == 9999, NA, povrati2/100),
-        Unemployment = ifelse(wrklyr3 < 7, wrklyr3, NA)
-        
-      )
-    
-  }
-  
-  ### now we can recode some of the year-dependent variables that we generated above
-  y <- 
-    transform( 
-      y , 
-      # create a variable for people above 138% of the poverty line
-      above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1), exclude=NA)  ,
-      # create a four-category poverty variable
-      fine.povcat =
-        cut( 
-          povrati3 , 
-          c( -Inf , 1.38 , 2 , 4 , Inf ) ,
-          labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
+    if (year > 2013 ){  # Recode 2014-specific variables 
+                        # within these brackets 
+      y <-
+        transform(
+          y ,
+          #### set all the "I don't know" / "refused to answer" codes to NA
+          asisad = ifelse(asisad < 7, asisad, NA),
+          asinerv = ifelse(asinerv < 7, asinerv, NA),
+          asihopls = ifelse(asihopls < 7, asihopls, NA),
+          asirstls = ifelse(asirstls < 7, asirstls, NA),
+          asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
+          asiwthls = ifelse(asiwthls < 7, asiwthls, NA),
+          
+          # 999999 is an NA code for income
+          povrati3 = ifelse(povrati3 == 999999, NA, povrati3)
         )
-    )
-  
-  
-  
+      
+      y <- 
+        transform( 
+          y , 
+          K6 = 
+            # calculate K6 score. Variables must be reverse coded and 
+            # scaled from 0-24 to match the standard scoring.
+            (5-asisad + 
+               5-asinerv + 
+               5-asihopls + 
+               5-asirstls + 
+               5-asieffrt + 
+               5-asiwthls) )
+      
+      y <- 
+        transform( 
+          y , 
+          
+          # code variable for "Serious Psychological Distress (SMI)" based on K6 score
+          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1),exclude=NA))
+      
+      
+    }else{  # Recode pre-2013 variables within 
+            # these brackets
+      y <- 
+        transform(
+          y ,
+          #### set all the "I don't know" / "refused to answer" codes to NA
+          #These are the K6 variable names for pre-2013 NHIS survey years
+          sad = ifelse(sad < 7, sad, NA),
+          nervous = ifelse(nervous < 7, nervous, NA),
+          hopeless = ifelse(hopeless < 7, hopeless, NA),
+          restless = ifelse(restless < 7, restless, NA),
+          effort = ifelse(effort < 7, effort, NA),
+          worthls = ifelse(worthls < 7, worthls, NA)
+        )
+      
+      y <- 
+        transform(
+          y ,
+          # calculate K6 score
+          K6 = 
+            (5-sad + 
+               5-nervous + 
+               5-hopeless + 
+               5-restless + 
+               5-effort + 
+               5-worthls)     
+        )
+      
+      y <- 
+        transform( 
+          y , 
+          # code variable for "Serious Psychological Distress (SMI)" based on K6 score
+          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1), exclude=NA)
+        )
+      
+    }
+    if (year >= 2010 ){  # Recode post-2010 variables within these brackets
+      y <- 
+        transform( 
+          y , 
+          Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA)
+        )
+      
+      if (year >=2010 & year <= 2013){   # Recode variables specific to the 2010-2013 period within these brackets
+        y <- 
+          transform( 
+            y , 
+            # 999999 is NA code. Also need to add appropriate decimal place
+            povrati3 = ifelse(povrati3 == 999999, NA, povrati3/1000)
+          )
+        
+      }
+      
+    }else{     # Recode pre-2010 variables within these brackets
+      y <- 
+        transform( 
+          y , 
+          povrati3 = ifelse(povrati2 == 9999, NA, povrati2/100),
+          Unemployment = ifelse(wrklyr3 < 7, wrklyr3, NA)
+          
+        )
+      
+    }
+    
+    ### now we can further recode some of the year-dependent variables that we just generated
+    y <- 
+      transform( 
+        y , 
+        # create a variable for people above 138% of the poverty line
+        above.138 = factor( as.numeric(povrati3 > 1.38) , labels = c("In poverty", "Above 138% poverty line"), levels=c(0,1), exclude=NA)  ,
+        # create a four-category poverty variable
+        fine.povcat =
+          cut( 
+            povrati3 , 
+            c( -Inf , 1.38 , 2 , 4 , Inf ) ,
+            labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
+          )
+      )
+    
+    
+    
     # END OF VARIABLE RECODING #
     ############################
-    assign( paste0( 'x' , i ,'pre') , y[,variables.to.keep] )
+    
+    # save the data frames as objects x1post - x5post (or x1pre -x5pre), depending 
+    # on the iteration in the loop.
+    # at the same time restrict the resulting dataset to the variables of interest 
+    # specified above. If we don't do this the script takes much, much longer.
+    assign( paste0(  'x' , i , chronology) , y[,variables.to.keep] )
+    
+    #start constructing a list for the imputed files
+    
+    # delete the y and ii# data frames
     y <- NULL
-    assign( paste0("ii" , i ) , NULL )
+    assign( paste0( "ii" , i ) , NULL )
+    
+
+    # garbage collection - free up RAM from recently-deleted data tables
     gc()
   }
   
-    #create our simple dataset that contains recoded variables
-    #for use in analyses that don't require income data
-    pre.i <- x1pre  
+  #clean up intermediary data
+  rm(current.i)
+  
+  # To minimize processing time for analyses that *don't* require multiply imputed income
+  # we want to have a dataset available that has all the recoded variables 
+  unimputedDataName <- paste0("unimputed",chronology)
+  assign(unimputedDataName, get(paste0("x1",chronology)))
+  
+  #create a list holding multiple imputations
+  output <- list(
+              get(paste0(  'x1' , chronology)),
+              get(paste0(  'x2' , chronology)),
+              get(paste0(  'x3' , chronology)),
+              get(paste0(  'x4' , chronology)),
+              get(paste0(  'x5' , chronology))
+              )
+  
+  #tack on the unimputed list
+  output <- list(output, get(unimputedDataName) )
+  
+  # ouptut[[1]] holds the 5 imputed datasets
+  # output[[2]] hold the unimputed dataset
+  return(output)
+  
+  }
+
+#####################################################################################
+######### end of prepocessing function ##############################################
+#####################################################################################
+
+
+}
+
+
+
+
+
+# use the function we just defined to pull lists of processed data.
+# these datasets will be restricted to the variables.to.keep that 
+# you specified earlier
+
+preOutput <- preprocessNHISdata(comparedToYear, mostRecentData=FALSE) # 'Pre' year
+postOutput <- preprocessNHISdata(latestYear, mostRecentData=TRUE)     # 'Post' year
+
+
+
+# get the list of imputed files for Pre and Post years
+for (i in 1:5){
+assign(paste0("x",i,"pre"), preOutput[[1]][[i]])
+assign(paste0("x",i,"post"), postOutput[[1]][[i]])
+}
+
+#get a set for non-imputed analyses of the PRE year
+preUnimputed <- preOutput[[2]]
+postUnimputed <- postOutput[[2]]
+
+#delete the stripped outputs
+rm(preOutput)
+rm(postOutput)
+
+#clear up RAM
+gc()
+
+
+
+  
+  #create survey design object for all the Post analyses that don't require info on income
+  psa.Post <- 
+    svydesign( 
+      id = ~psu_p , 
+      strata = ~strat_p ,
+      nest = TRUE ,
+      weights = ~wtfa_sa,  
+      data = postUnimputed
+    )
+  #restrict to specified age range
+  psa.Post <- subset(psa.Post, age_p >= minimumAge & age_p < maximumAge)
+  
+  #create multiply imputed survey design object for Post analyses that require income info
+  psa.impPost <- 
+    svydesign( 
+      id = ~psu_p , 
+      strata = ~strat_p ,
+      nest = TRUE ,
+      weights = ~wtfa_sa,  
+      data = imputationList(list(x1post,
+                            x2post,
+                            x3post,
+                            x4post,
+                            x5post)
+                            )
+                      )
+
+    
+  #restrict to specified age range
+  psa.impPost <- subset(psa.impPost, age_p >= minimumAge & age_p < maximumAge)
   
   #create survey design object for unimputed 'Pre' analyses
   psa.Pre <- 
@@ -606,7 +648,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       strata = ~strat_p ,
       nest = TRUE ,
       weights = ~wtfa_sa,  
-      data = pre.i
+      data = preUnimputed
     )
   #subset to specified age ranges
   psa.Pre <- subset(psa.Pre, age_p >= minimumAge & age_p < maximumAge)
@@ -618,7 +660,11 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       strata = ~strat_p ,
       nest = TRUE ,
       weights = ~wtfa_sa, 
-      data = imputationList( list( x1pre , x2pre , x3pre , x4pre , x5pre ) )
+      data = imputationList(list(x1pre,
+                            x2pre,
+                            x3pre,
+                            x4pre,
+                            x5pre) )
     )
   #subset to specified age ranges
   psa.impPre <- subset(psa.impPre, age_p >= minimumAge & age_p < maximumAge)
@@ -631,11 +677,12 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       strata = ~strat_p , 
       nest = TRUE , 
       weights = ~wtfa_sa, 
-      data = rbind(pre.i,post.i) #combine unimputed pre and post datasets together
+      data = rbind(preUnimputed,postUnimputed) #combine unimputed pre and post datasets together
       ) 
   #subset to specified age ranges
   psa.noImp <- subset(psa.noImp, age_p >= minimumAge & age_p < maximumAge)
   
+rm(preUnimputed,postUnimputed)
   
   for ( i in 1:5 ){
     # For each of the five imputed dataset, collapse Pre-Post for multi-year analyses
@@ -647,15 +694,6 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     assign(paste0( "x" , i, "pre" ), NULL)
     assign(paste0( "x" , i, "post" ), NULL)
   }
-  
-  #Erase previous data that won't be needed 
-  rm(sa)
-  rm(pre.i)
-  rm(post.i)
-  rm(x)
-  rm(x.saPre)
-  rm(x.saPost)
-  rm(current.i)
   
   # clear up RAM
   gc()
@@ -690,7 +728,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   
   ## Create a "sink" txt file that we can open at the end to show us all our results in a more readable way
-  sinkFile <- paste(getwd(),"/TempOutput", year,".txt", sep="")
+  sinkFile <- paste(getwd(),"/TempOutput", comparedToYear,"-", latestYear,".txt", sep="")
   sink(sinkFile, type="output")
   
   
@@ -707,7 +745,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
 ########          Representative household survey; complex sample design.
 ###########################
 
-  2014 compared with", year,"
+ ",latestYear,"compared with", comparedToYear,"
   Minimum age for inclusion: ", minimumAge,"
   Maximum age for inclusion: ", maximumAge,"
         
@@ -719,7 +757,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
     Count of the USA population with and without Serious Psychological Distress (SMI)
             
       
-      ###### in",year,"
+      ###### in",comparedToYear,"
       
       ")
   
@@ -727,7 +765,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   cat("
       
-      ###### in 2014
+      ###### in",latestYear,"
       
       ")
   svytotal(~as.character(SMI),design = psa.Post, na.rm=T)
@@ -740,7 +778,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
     The \"mean\" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
 
-     ###### in",year,"
+      ###### in",comparedToYear,"
   
   ")
   
@@ -748,7 +786,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   cat("
   
-     ###### in 2014
+      ###### in",latestYear,"
   
   ")
   
@@ -763,7 +801,7 @@ cat("###########################################################################
     Percent (%) of the USA population with health insurance coverage at the time of survey 
     (Split up between those With vs. Without SMI)
 
-     ###### in",year,"
+     ###### in",comparedToYear,"
 
       ")
   
@@ -771,7 +809,7 @@ cat("###########################################################################
   
   cat("
 
-     ###### in 2014
+      ###### in",latestYear,"
 
       ")
   (svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Post, na.rm=T) )
@@ -781,7 +819,7 @@ cat("###########################################################################
 
    % who saw a mental health professional in past 12 months 
        
-    ###### in ",year,"
+    ###### in ",comparedToYear,"
       
       ")
   
@@ -789,7 +827,7 @@ cat("###########################################################################
   
   cat("
       
-    ###### in 2014
+      ###### in",latestYear,"
 
       ")
   
@@ -803,7 +841,7 @@ cat("###########################################################################
     % of people at 138% of poverty line. (Note: people below 138% qualified for expanded 
     medicaid as of January 1, 2014)
       
-     ###### in ",year,"
+     ###### in",comparedToYear,"
       
       ")
   
@@ -812,7 +850,7 @@ cat("###########################################################################
   
   cat("
       
-     ###### in 2014
+      ###### in",latestYear,"
 
       ")
   summary(MIcombine(with( psa.impPost , 
@@ -831,7 +869,7 @@ cat("###########################################################################
           xlab="K6 Psychological Distress")
   abline(1.38,0, col="darkred")    # mark poverty line
   text(22,2, "138% FPL", col=2)   #label poverty line
-  title("Income and Psychological Distress (2014)") # Add a title
+  title(paste0("Income and Psychological Distress (",latestYear,")")) # Add a title
   
   
   cat("
@@ -840,14 +878,14 @@ cat("###########################################################################
 
     Average ages of people with and without SMI
       
-      ###### in ",year,"
+     ###### in",comparedToYear,"
       
       ")
   svyby(~age_p,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
   cat("
       
 
-      ###### in 2014
+      ###### in",latestYear,"
 
       ")
   svyby(~age_p,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
@@ -863,14 +901,14 @@ cat("###########################################################################
            2 = No job last week, no job past 12 months
            3 = Never worked
       
-      ###### in ",year,"
+     ###### in",comparedToYear,"
       
       ")
   
   svyby(~Unemployment,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
   cat("
       
-      ###### in 2014
+      ###### in",latestYear,"
       
       ")
   svyby(~Unemployment,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
@@ -884,7 +922,7 @@ cat("###########################################################################
       
     Among people with any insurance, what % were covered via medicaid or medicare?
       
-      ###### in ",year,"
+     ###### in",comparedToYear,"
       
       ")
   
@@ -896,7 +934,7 @@ cat("###########################################################################
   
   cat("
       
-      ###### in 2014
+      ###### in",latestYear,"
       
       ")
   svyby(~factor(PublicInsurance),~as.character(SMI),svymean,design=psa.CovPost,vartype="ci",na.rm=T) 
@@ -915,9 +953,9 @@ cat("###########################################################################
 cat("
   
 
-  #############################
-  # What predicts SMI? (2014) #
-  #############################
+  ###############################
+  # What predicts SMI? (",latestYear,") #
+  ###############################
   
   ")
   
@@ -936,9 +974,9 @@ cat("
   cat("
   
 
-  #######################################
-  # Who is seeking MH treatment? (2014) #
-  #######################################
+  #########################################
+  # Who is seeking MH treatment? (",latestYear,") #
+  #########################################
   
   ")
   
@@ -959,9 +997,9 @@ cat("
   cat("
   
 
-  ####################################
-  # Who has health insurance? (2014) #
-  ####################################
+  ######################################
+  # Who has health insurance? (",latestYear,") #
+  ######################################
   
   ")
   summary(MIcombine( with( psa.impPost , 
@@ -981,9 +1019,9 @@ cat("
   cat("
 
 
-  ################################################################################
-  # Among those insured, who has public insurance (medicaid or medicare)? (2014) #
-  ################################################################################
+  ##################################################################################
+  # Among those insured, who has public insurance (medicaid or medicare)? (",latestYear,") #
+  ##################################################################################
       
       ")
   
@@ -1212,8 +1250,7 @@ cat("
 ################################################################################
       
       ###############  
-      #### DID for racial disparity in health coverage
-      #### Things got a little better
+      ###DID for racial disparity in health coverage
       ########  
 
       
@@ -1242,10 +1279,12 @@ cat("
   sink()
   # automatically open the sink file to see the output of your analyses
   file.show(sinkFile)
+  #tell us the file location for the outputs
+  paste("Results saved to:",sinkFile)
   #clear RAM
   gc()
-  # Erase all the objects we created
-  rm(list = ls())
+  # Erase all the objects we created earlier except the function, which can be reused
+  rm(list = ls()[!(ls() %in% "preprocessNHISdata")])
   
   
 
