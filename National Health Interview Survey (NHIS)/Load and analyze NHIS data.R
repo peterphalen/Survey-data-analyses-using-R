@@ -32,11 +32,14 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   #########################################################################################################
   
 
+
+
+
   ########################################
   ###        Begin user settings.       ##
   ###  (These variables are set by you. ## 
-  ###  The rest of the code autoruns    ##
-  ###  according to these settings.)    ##
+  ###  The rest of the code should      ##
+  ###   depend on these settings.)      ##
   ########################################
 
 
@@ -47,10 +50,10 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # choose what year of data to analyze
   # note: this can be changed to any year that has already been downloaded locally
   # fair warning: I wrote this with reference to NHIS years 2009-2014. If you
-  # want to run this with earlier years of data you may need to adjust the variable 
-  # recoding code below to account for relevant changes in variable names and formats  
+  # want to run this with earlier years of data you may need to adjust the preprocessing 
+  # function below to account for relevant changes in variable names and formats  
 
-  latestYear <- 2014  #2014 is currently the latest available dataset 
+  latestYear <- 2014        #2014 is currently the latest available dataset 
   comparedToYear <- 2010
   
 
@@ -65,20 +68,28 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   maximumAge <- 65
   
 
-  #use this as a 'greater than or equal to' cutoff for the K6 
-  #to determine who counts as distressed. Most common cut-off is 13 for SMI, 
+  # use this as a 'greater than or equal to' cutoff for the K6 
+  # to determine who counts as SMI. Most common cut-off is 13 for SMI, 
   # see Kessler et al 2010 
   # http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
 
   SMIthreshold <- 13
   
 
+  # Set this to the quarters you'd like to keep. Leave as c(1:4) or c(1,2,3,4) if you
+  # want the complete year's worth of data. Otherwise, choose subsets like c(2:4)
+  # This may be a good idea if you're analyzing the effect of the January 1, 2014
+  # medicaid expansion, as these may only be visible in later quarters.
 
-  # Set this to TRUE only if you have manually changed the preprocessNHISdata 
-  # function and need to force it to update (e.g., if you've just gone into 
-  # the function code below and changed how variables are calculated or formatted). 
+  quarters.to.keep <- c(1:4)
+
+
+  # Set updatePreprocessingFunction to TRUE only if you have just manually changed 
+  # the preprocessNHISdata function and need to force it to update (e.g., if you've 
+  # just gone into the function code below and changed how variables are calculated
+  # or formatted). 
   # Note: If this is a new R session, don't worry about this as the script
-  # will update the preprocessing function automatically if it's not presently
+  # will update the preprocessing function automatically whenever it's not presently
   # declared in your Global Environment.
 
   updatePreprocessingFunction <- FALSE
@@ -95,12 +106,14 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       "psu_p",   # (cluster)
       "strat_p", # (stratum)
       "wtfa_sa", # (weight) 
+      "intv_qrt", # (interview quarter [1-4])
       
       # merge variables: do not alter these
       "hhx" ,  # (household unique identifier)
       "fmx" ,  # (family unique identifier)
       "fpx" ,  # (person unique identifier)
 
+      
       
       # analysis variables: you can change these
       "age_p",       # age, continuous (native to dataset)
@@ -159,21 +172,35 @@ preprocessNHISdata <- function(year, mostRecentData = TRUE){
 
     #if the user asks to process pre-2009 data,
     #don't stop them but throw a warning
-    if (year<2009){ 
+    if (year < 2009){ 
       warning("This script hasn't been tested on years prior to 2009")
     }
     
-    #For Pre-Post analyses, label the more recent dataset
-    #with 'post' and the earlier dataset with 'pre' 
+
     if (mostRecentData == TRUE) {
-      prepost <- 1
+      
+      # For Pre-Post analyses, label the more recent dataset
+      # with 'post' 
       chronology <- "post"
+      
+      #dummy code for year
+      post <- 1
+
     }else{
-      if (mostRecentData == FALSE){
-        prepost <- 0
+      if (mostRecentData == FALSE){ 
+        
+        # and the earlier dataset with 'pre' 
         chronology <- "pre"
+        
+        #dummy code for year
+        post <- 0
+
       }else{
-        stop("The mostRecentData argument must be set to either TRUE or FALSE. For Pre-Post analyses, set mostRecentData to FALSE if this is your Pre dataset, or TRUE if this is your Post dataset")
+        
+        #If the user doesn't set mostRecentData to either T or F, throw an error
+        stop("The mostRecentData argument must be set to either TRUE or FALSE. 
+             For Pre-Post analyses, set mostRecentData to FALSE if this is your Pre dataset, 
+             or TRUE if this is your Post dataset")
       }
     }
     
@@ -200,12 +227,10 @@ preprocessNHISdata <- function(year, mostRecentData = TRUE){
   
   # now the "NHIS.[year].personsx.df" data frame can be loaded directly
   # from your local hard drive.  this is much faster.
-  load( path.to.personsx.file )		# this loads a data frame called NHIS.11.personsx.df
-  load( path.to.samadult.file )		# this loads a data frame called NHIS.11.samadult.df
+  load( path.to.personsx.file )		# this loads a data frame called NHIS.[year].personsx.df
+  load( path.to.samadult.file )		# this loads a data frame called NHIS.[year].samadult.df
   # the five imputed income files will be loaded later
   
-  # all objects currently in memory can be viewed with the list function
-  ls()
   
   # construct a string containing the data frame name of the personsx data table
   # stored within the R data file (.rda)
@@ -296,6 +321,11 @@ Merging files...")
   # does not match the number of records in the samadult file
   stopifnot( nrow( x.sa ) == nrow( sa ) )
   
+  # if the user chose to restrict the number of quarters to include
+  # in the analysis, cut those quarters out of the data set
+  if ( length(quarters.to.keep)<4 ){
+    x.sa <- x.sa[which(x.sa$intv_qrt %in% quarters.to.keep),]
+  }
   
   # now the x.sa data frame contains all of the rows in the samadult file and 
   # all columns from both the samadult and personsx files
@@ -397,7 +427,7 @@ Recoding variables...",loopNumber)
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
         
         #these variables either don't have missing values, or the missing values are irrelevant to our analyses
-        YEAR = factor(prepost, labels = year),
+        YEAR = factor(post, labels = year),
         WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
         sex = factor(sex, labels=c("Male", "Female")),
         PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0))
@@ -405,7 +435,7 @@ Recoding variables...",loopNumber)
     
     ## the rest of the variables we're interested in are year-dependent
     
-    if (year > 2013 ){  # Recode 2014-specific variables 
+    if (year >= 2013 ){  # Recode post-2013 variables 
                         # within these brackets 
       y <-
         transform(
@@ -416,10 +446,8 @@ Recoding variables...",loopNumber)
           asihopls = ifelse(asihopls < 7, asihopls, NA),
           asirstls = ifelse(asirstls < 7, asirstls, NA),
           asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
-          asiwthls = ifelse(asiwthls < 7, asiwthls, NA),
+          asiwthls = ifelse(asiwthls < 7, asiwthls, NA)
           
-          # 999999 is an NA code for income
-          povrati3 = ifelse(povrati3 == 999999, NA, povrati3)
         )
       
       y <- 
@@ -479,24 +507,29 @@ Recoding variables...",loopNumber)
         )
       
     }
-    if (year >= 2010 ){  # Recode post-2010 variables within these brackets
+    
+    
+    
+    if (year >= 2011 ){  # Recode post-2011 variables within these brackets
       y <- 
         transform( 
           y , 
-          Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA)
+          Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA),
+          # 999999 is NA code. Also need to add appropriate decimal place
+          povrati3 = ifelse(povrati3 == 999999, NA, povrati3)
         )
+    
+    }else{     
       
-      if (year >=2010 & year <= 2013){   # Recode variables specific to the 2010-2013 period within these brackets
+      if (year == 2010){ # 2010 variables within these brackets
         y <- 
           transform( 
             y , 
+            Unemployment = ifelse(wrklyr4 < 7, wrklyr4, NA),
             # 999999 is NA code. Also need to add appropriate decimal place
             povrati3 = ifelse(povrati3 == 999999, NA, povrati3/1000)
           )
-        
-      }
-      
-    }else{     # Recode pre-2010 variables within these brackets
+      }else{ # pre-2010 variables within these brackets
       y <- 
         transform( 
           y , 
@@ -504,6 +537,7 @@ Recoding variables...",loopNumber)
           Unemployment = ifelse(wrklyr3 < 7, wrklyr3, NA)
           
         )
+      }
       
     }
     
@@ -749,14 +783,28 @@ rm(preUnimputed,postUnimputed)
   Minimum age for inclusion: ", minimumAge,"
   Maximum age for inclusion: ", maximumAge,"
         
+")
+if (length(quarters.to.keep) < 4 ){
+cat("
+  You chose to restrict your dataset to these survey quarters: ", quarters.to.keep," 
+    ")
+}
 
+cat("
 ################################################################################
  
       
       
     Count of the USA population with and without Serious Psychological Distress (SMI)
             
-      
+      ")
+if (length(quarters.to.keep)<4){
+cat("
+    Total counts won't be accurate if you've restricted the number of quarters you chose to analyze
+
+    ")
+}
+cat("
       ###### in",comparedToYear,"
       
       ")
@@ -870,8 +918,7 @@ cat("###########################################################################
   abline(1.38,0, col="darkred")    # mark poverty line
   text(22,2, "138% FPL", col=2)   #label poverty line
   title(paste0("Income and Psychological Distress (",latestYear,")")) # Add a title
-  
-  
+
   cat("
 ################################################################################
 
@@ -1062,6 +1109,7 @@ cat("
 
 
       ")
+
   
                   summary(svyglm(as.numeric(coverage) ~
                                     as.character(SMI) + 
@@ -1281,7 +1329,7 @@ cat("
   # automatically open the sink file to see the output of your analyses
   file.show(sinkFile)
   #tell us the file location for the outputs
-  paste("Results saved to:",sinkFile)
+  paste("Analysis results saved to:",sinkFile)
   #clear RAM
   gc()
   # Erase all the objects we created earlier except the function, which can be reused
