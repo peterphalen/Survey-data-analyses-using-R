@@ -13,6 +13,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
   # # # # # # # # # # # # # # # # # # # #
   # # block of code to get data from NHIS... warning: this can literally take all night. uncomment to run
+  # # Code by A. Damico [http://www.asdfree.com/]
   # # # # # # # # # # # # # # # # # # # # 
   #  options( encoding = "windows-1252" )  	# only macintosh and *nix users need this line
   #    library(downloader) 
@@ -54,7 +55,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # function below to account for relevant changes in variable names and formats  
 
   latestYear <- 2014        #2014 is currently the latest available dataset 
-  comparedToYear <- 2010
+  comparedToYear <- 2010 
   
 
   ## Minimum and maximum ages to include in dataset. 
@@ -77,7 +78,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   
 
   # Set this to the quarters you'd like to keep. Leave as c(1:4) or c(1,2,3,4) if you
-  # want the complete year's worth of data. Otherwise, choose subsets like c(2:4)
+  # want the complete year's worth of data. Otherwise, choose subsets like wh4)
   # This may be a good idea if you're analyzing the effect of the January 1, 2014
   # medicaid expansion, as these may only be visible in later quarters.
 
@@ -327,6 +328,9 @@ Merging files...")
     x.sa <- x.sa[which(x.sa$intv_qrt %in% quarters.to.keep),]
   }
   
+  #subset down to specified age ranges
+  x.sa <- x.sa[which((x.sa$age_p >= minimumAge) & (x.sa$age_p < maximumAge) ),]
+  
   # now the x.sa data frame contains all of the rows in the samadult file and 
   # all columns from both the samadult and personsx files
   # therefore, there's no more need for the samadult file on its own
@@ -566,9 +570,7 @@ Recoding variables...",loopNumber)
     # at the same time restrict the resulting dataset to the variables of interest 
     # specified above. If we don't do this the script takes much, much longer.
     assign( paste0(  'x' , i , chronology) , y[,variables.to.keep] )
-    
-    #start constructing a list for the imputed files
-    
+        
     # delete the y and ii# data frames
     y <- NULL
     assign( paste0( "ii" , i ) , NULL )
@@ -672,8 +674,6 @@ gc()
                       )
 
     
-  #restrict to specified age range
-  psa.impPost <- subset(psa.impPost, age_p >= minimumAge & age_p < maximumAge)
   
   #create survey design object for unimputed 'Pre' analyses
   psa.Pre <- 
@@ -684,8 +684,6 @@ gc()
       weights = ~wtfa_sa,  
       data = preUnimputed
     )
-  #subset to specified age ranges
-  psa.Pre <- subset(psa.Pre, age_p >= minimumAge & age_p < maximumAge)
   
   #create multiply imputed survey design object for income-related 'Pre' analyses
   psa.impPre <- 
@@ -700,8 +698,6 @@ gc()
                             x4pre,
                             x5pre) )
     )
-  #subset to specified age ranges
-  psa.impPre <- subset(psa.impPre, age_p >= minimumAge & age_p < maximumAge)
   
   
   #create Pre-Post survey design object for non-income 'Pre' analyses
@@ -713,8 +709,6 @@ gc()
       weights = ~wtfa_sa, 
       data = rbind(preUnimputed,postUnimputed) #combine unimputed pre and post datasets together
       ) 
-  #subset to specified age ranges
-  psa.noImp <- subset(psa.noImp, age_p >= minimumAge & age_p < maximumAge)
   
 rm(preUnimputed,postUnimputed)
   
@@ -746,8 +740,6 @@ rm(preUnimputed,postUnimputed)
                                    x4 ,
                                    x5 ) ) 
     )
-  #subset to specified age ranges
-  psa.imp <- subset(psa.imp, age_p >= minimumAge & age_p < maximumAge)
  
   #erase the 5 component datasets which won't be needed anymore
   for (i in 1:5) { assign(paste0( "x" , i ), NULL)}  
@@ -774,7 +766,6 @@ rm(preUnimputed,postUnimputed)
 ######## Distress (SMI) in the United States. 
 ######## 
 ######## Author: Peter Phalen 
-######## (with help from code by A. Damico [http://www.asdfree.com/])
 ######## Dataset: National Health Interview Survey (NHIS; http://www.cdc.gov/nchs/nhis.htm)
 ########          Representative household survey; complex sample design.
 ###########################
@@ -860,7 +851,7 @@ cat("###########################################################################
       ###### in",latestYear,"
 
       ")
-  (svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Post, na.rm=T) )
+  svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Post, na.rm=T) 
   
   cat("
 ################################################################################
@@ -1012,8 +1003,7 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     educ1 +
-                                    age_p +
-                                    Unemployment,
+                                    age_p,
                                   family=quasibinomial())
   )
   ))
@@ -1035,7 +1025,6 @@ cat("
                                     as.character(sex) +
                                     educ1 +
                                     age_p +
-                                    Unemployment +
                                     as.character(coverage) +
                                     as.character(SMI) ,
                                   family=quasibinomial())
@@ -1057,7 +1046,6 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    Unemployment +
                                     as.character(SMI) ,
                                   family=quasibinomial())
   )
@@ -1085,7 +1073,6 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    Unemployment +
                                     as.character(SMI) ,
                                   family=quasibinomial())
   )
@@ -1140,7 +1127,6 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    Unemployment +
                                     as.character(SMI) + 
                                     as.character(YEAR) + 
                                     as.character(SMI):as.character(YEAR))
@@ -1189,7 +1175,6 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    Unemployment +
                                     as.character(SMI) + 
                                     as.character(YEAR) + 
                                     as.character(SMI):as.character(YEAR))
@@ -1237,7 +1222,6 @@ cat("
                                                         as.character(sex) +
                                                         age_p +
                                                         educ1 +
-                                                        Unemployment +
                                                         as.character(coverage) +
                                                         as.character(SMI) + 
                                                         as.character(YEAR)  +
@@ -1283,7 +1267,6 @@ cat("
                                      as.character(sex) +
                                      age_p +
                                      educ1 +
-                                     Unemployment +
                                      as.character(SMI) + 
                                      as.character(YEAR)  +
                                      as.character(SMI):as.character(YEAR)
@@ -1312,7 +1295,6 @@ cat("
                                               as.character(SMI) +
                                               as.character(sex) +
                                               age_p +
-                                              Unemployment +
                                               as.character(WHITE) + 
                                               as.character(YEAR)  +
                                               as.character(WHITE):as.character(YEAR)
