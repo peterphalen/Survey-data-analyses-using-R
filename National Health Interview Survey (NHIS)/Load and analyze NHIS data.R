@@ -55,7 +55,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # function below to account for relevant changes in variable names and formats  
 
   latestYear <- 2014        #2014 is currently the latest available dataset 
-  comparedToYear <- 2010 
+  comparedToYear <- 2010
   
 
   ## Minimum and maximum ages to include in dataset. 
@@ -63,7 +63,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   ## If you want to use the complete data, just set 
   ## minimumAge to 0 and maximumAge to 999
   ##
-  ## Note: minimumAge =< x < maximumAge
+  ## Note: minimumAge <= x < maximumAge
   
   minimumAge <- 18
   maximumAge <- 65
@@ -205,6 +205,11 @@ preprocessNHISdata <- function(year, mostRecentData = TRUE){
       }
     }
     
+    # Throw an error and stop script if the user asked for a quarter greater than 4 or less than 1
+    if (TRUE %in% c(quarters.to.keep > 4, quarters.to.keep < 1)){
+      stop("You can only choose quarters between 1 and 4")
+    }
+    
     
     ########################################################  
     ##########          Load data           ################ 
@@ -328,6 +333,7 @@ Merging files...")
     x.sa <- x.sa[which(x.sa$intv_qrt %in% quarters.to.keep),]
   }
   
+  
   #subset down to specified age ranges
   x.sa <- x.sa[which((x.sa$age_p >= minimumAge) & (x.sa$age_p < maximumAge) ),]
   
@@ -426,7 +432,7 @@ Recoding variables...",loopNumber)
     y <- 
       transform( 
         y , 
-        #Recode variables of interest just like we did for the year above
+        #Recode variables of interest as needed. Here we're converting variables with multiple levels into binary variables
         coverage = factor( as.numeric(notcov==2), labels = c("Not covered now", "Covered now"), levels=c(0,1),exclude=NA),
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
         
@@ -445,6 +451,8 @@ Recoding variables...",loopNumber)
         transform(
           y ,
           #### set all the "I don't know" / "refused to answer" codes to NA
+          # these are the K6 components, which were renamed in 2013 for some 
+          # reason
           asisad = ifelse(asisad < 7, asisad, NA),
           asinerv = ifelse(asinerv < 7, asinerv, NA),
           asihopls = ifelse(asihopls < 7, asihopls, NA),
@@ -618,7 +626,7 @@ Recoding variables...",loopNumber)
 
 
 # use the function we just defined to pull lists of processed data.
-# these datasets will be restricted to the variables.to.keep that 
+# these datasets have been restricted to the variables.to.keep that 
 # you specified earlier
 
 preOutput <- preprocessNHISdata(comparedToYear, mostRecentData=FALSE) # 'Pre' year
@@ -655,8 +663,6 @@ gc()
       weights = ~wtfa_sa,  
       data = postUnimputed
     )
-  #restrict to specified age range
-  psa.Post <- subset(psa.Post, age_p >= minimumAge & age_p < maximumAge)
   
   #create multiply imputed survey design object for Post analyses that require income info
   psa.impPost <- 
@@ -754,7 +760,7 @@ rm(preUnimputed,postUnimputed)
   
   
   ## Create a "sink" txt file that we can open at the end to show us all our results in a more readable way
-  sinkFile <- paste(getwd(),"/TempOutput", comparedToYear,"-", latestYear,".txt", sep="")
+  sinkFile <- paste(getwd(),"/TempOutput", substr( comparedToYear , 3 , 4 ),"-", substr( latestYear , 3 , 4 ),".txt", sep="")
   sink(sinkFile, type="output")
   
   
@@ -1244,7 +1250,7 @@ cat("
       ")
   
   summary(
-    svyglm(as.numeric(povrati3) ~
+    svyglm(povrati3 ~
              as.character(SMI) + 
              as.character(YEAR) +
              as.character(SMI):as.character(YEAR),
@@ -1262,7 +1268,7 @@ cat("
       ")
   
   summary( MIcombine( with( psa.imp , 
-                            svyglm(as.numeric(povrati3) ~
+                            svyglm(povrati3 ~
                                      as.character(WHITE) +
                                      as.character(sex) +
                                      age_p +
