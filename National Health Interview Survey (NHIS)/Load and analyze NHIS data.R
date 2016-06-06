@@ -55,7 +55,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # function below to account for relevant changes in variable names and formats  
 
   latestYear <- 2014        #2014 is currently the latest available dataset 
-  comparedToYear <- 2010
+  comparedToYear <- 2013
   
 
   ## Minimum and maximum ages to include in dataset. 
@@ -65,7 +65,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   ##
   ## Note: minimumAge <= x < maximumAge
   
-  minimumAge <- 18
+  minimumAge <- 26
   maximumAge <- 65
   
 
@@ -82,7 +82,7 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
   # This may be a good idea if you're analyzing the effect of the January 1, 2014
   # medicaid expansion, as these may only be visible in later quarters.
 
-  quarters.to.keep <- c(1:4)
+  quarters.to.keep <- c(2:4)
 
 
   # Set updatePreprocessingFunction to TRUE only if you have just manually changed 
@@ -118,8 +118,16 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       
       # analysis variables: you can change these
       "age_p",       # age, continuous (native to dataset)
+      "SOUTHMW",     # region 1 = NE 2 = MW 3 = South 4 = W  (note: region "South" and "Midwest"  
+                     # account for all but one state with medicaid non-expansion, so region recoded to
+                     # 1 for SOUTH or MIDWEST and 0 for the other three regions)
+      "SOUTH",       # region with by far highest number of people in non-expanded medicaid states who would have been eligible
       "K6",          # K6 Serious Psychological Distress score, continuous, 0-24
-      "SMI" ,        # K6 >= SMIthreshold, 0 = No Serious Mental Illness (SMI), 1 = SMI
+      "SMI" ,        # K6 >= SMIthreshold, 0 = No Serious Mental Illness (SMI), 1 = SMI. see http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
+      "SMIonly" ,        # 0 = K6 < 5, 1 = K6 >= 13 see http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659799/pdf/nihms447801.pdf
+      "distressLevel", # 0 = K6 >= 5 but less than 13, indicating moderate clinical distress. see http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3370145/
+      "anyDistress", # K6 greater than or equal to 5
+      "modDistress", # K6 >= 5 < 13
       "YEAR",        # Survey year, 0 = Pre, 1 = Post, recoded later
       "coverage",    # Health insurance coverage, 0 = Not covered at time of 
                      # survey, 1 = covered
@@ -132,13 +140,18 @@ wants <- c("SAScii", "RCurl", "downloader", "digest", "survey", "mitools")
       "WHITE",       # 0 = non-White, 1 = White
       "educ1",       # Level of education, ordinal, ranges from 0-21
       "PublicInsurance",  # 1 = Covered by medicaid or medicare, 0 = Anyone else
-      "Unemployment"      # level of unemployment, ordinal, 0 = Had job last week, 
+      "Unemployment",      # level of unemployment, ordinal, 0 = Had job last week, 
                                                           # 1 = No job last week, had job past 12 months  
                                                           # 2 = No job last week, no job past 12 months, 
                                                           # 3 = Never worked
-    
+      "couldNotAffordMH"      #needed mental health care but couldn't afford it  1=Yes 2=No
+    # "decentHCsatisfaction"     # 1 = Better 2 = Worse 3 = About the same, 
+      
     )
   
+#    if ( (latestYear >= 2013) & (comparedToYear >= 2013) ) {
+#      c(variables.to.keep, "aworpay")
+#    }
 
     #########################################
     ###          End user settings.        ##
@@ -437,10 +450,15 @@ Recoding variables...",loopNumber)
         ahcsyr1 = factor(as.numeric(ahcsyr1==1), labels = c("No mh prof", "Saw mh prof"), levels=c(0,1), exclude = NA),
         
         #these variables either don't have missing values, or the missing values are irrelevant to our analyses
-        YEAR = factor(post, labels = year),
+        YEAR = factor(post),
         WHITE = factor(as.numeric(racreci3 == 1), labels = c("NonWhite", "White"), exclude = NA),
         sex = factor(sex, labels=c("Male", "Female")),
-        PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0))
+        PublicInsurance = ifelse(medicaid <= 2, 1, ifelse( medicare <=2 ,1, 0)),
+        couldNotAffordMH = ifelse(ahcafyr2 == 1, 1, ifelse( ahcafyr2 ==2 ,0, NA)),
+        SOUTHMW = ifelse(region == 3 | region == 2, 1, 0),
+        SOUTH = ifelse(region == 3 , 1, 0)
+        
+        
       )    
     
     ## the rest of the variables we're interested in are year-dependent
@@ -459,6 +477,9 @@ Recoding variables...",loopNumber)
           asirstls = ifelse(asirstls < 7, asirstls, NA),
           asieffrt = ifelse(asieffrt < 7, asieffrt, NA),
           asiwthls = ifelse(asiwthls < 7, asiwthls, NA)
+         
+          #this variable wasn't added until recently
+     #     decentHCsatisfaction = ifelse(ahicomp > 3, NA, ifelse(ahicomp == 1 | ahicomp == 3, 1, 0))  
           
         )
       
@@ -480,7 +501,23 @@ Recoding variables...",loopNumber)
           y , 
           
           # code variable for "Serious Psychological Distress (SMI)" based on K6 score
-          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1),exclude=NA))
+          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1),exclude=NA),
+          distressLevel = ifelse(K6 >= SMIthreshold, 1, ifelse( (K6 >= 5 ) & (K6 < 13) ,0, NA)), # 1 = SMI, 0 = moderate clinical distress, else NA http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3370145/x
+          anyDistress = ifelse(K6 >= 5, 1, 0), # 1 = SMI, 0 = moderate clinical distress, else NA http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3370145/x
+          modDistress = ifelse(K6 >=5 & K6 < 13,1,0),
+          SMIonly = ifelse(K6 >= 13, 1, ifelse(K6 < 5, 0, NA))
+          
+          )
+     
+     y <- 
+       transform( 
+         y , 
+         
+         # code variable for "Serious Psychological Distress (SMI)" based on K6 score
+         modDistress = factor(modDistress, labels=c("No distress","Moderate distress")),
+         SMIonly = factor(SMIonly, labels=c("No distress","Moderate distress"))
+         
+       )
       
       
     }else{  # Recode pre-2013 variables within 
@@ -515,7 +552,11 @@ Recoding variables...",loopNumber)
         transform( 
           y , 
           # code variable for "Serious Psychological Distress (SMI)" based on K6 score
-          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1), exclude=NA)
+          SMI = factor(as.numeric(K6 >= SMIthreshold), labels=c("No Serious Distress", "Serious Psych Distress (SMI)"), levels=c(0,1), exclude=NA),
+          distressLevel = ifelse(K6 >= SMIthreshold, 1, ifelse( (K6 >= 5 ) & (K6 < 13) ,0, NA)), # 1 = SMI, 0 = moderate clinical distress, else NA http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3370145/x
+          anyDistress = ifelse(K6 >= 5, 1, 0), # 1 = SMI, 0 = moderate clinical distress, else NA http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3370145/x
+          modDistress = ifelse(K6 >=5 & K6 < 13,1,0),
+          SMIonly = ifelse(K6 >= 13, 1, ifelse(K6 < 5, 0, NA))
         )
       
     }
@@ -567,7 +608,6 @@ Recoding variables...",loopNumber)
             labels = c( "<138%" , "138-200%" , "200-399%" , "400%+" )
           )
       )
-    
     
     
     # END OF VARIABLE RECODING #
@@ -629,28 +669,47 @@ Recoding variables...",loopNumber)
 # these datasets have been restricted to the variables.to.keep that 
 # you specified earlier
 
+#preOutputPool <- preprocessNHISdata(2012, mostRecentData=FALSE) # 'Pre' year for pooling
 preOutput <- preprocessNHISdata(comparedToYear, mostRecentData=FALSE) # 'Pre' year
 postOutput <- preprocessNHISdata(latestYear, mostRecentData=TRUE)     # 'Post' year
 
 
 
+
 # get the list of imputed files for Pre and Post years
 for (i in 1:5){
+#assign(paste0("x",i,"prePool"), preOutputPool[[1]][[i]])               
 assign(paste0("x",i,"pre"), preOutput[[1]][[i]])
 assign(paste0("x",i,"post"), postOutput[[1]][[i]])
 }
 
 #get a set for non-imputed analyses of the PRE year
+#preUnimputedPool <- preOutputPool[[2]]
 preUnimputed <- preOutput[[2]]
 postUnimputed <- postOutput[[2]]
 
 #delete the stripped outputs
 rm(preOutput)
 rm(postOutput)
+#rm(preOutputPool)
 
 #clear up RAM
 gc()
 
+#preUnimputed <- rbind(preUnimputedPool, preUnimputed)
+#rm(preUnimputedPool)
+
+# pool data
+#for ( i in 1:5 ){
+#  # For each of the five imputed dataset, collapse Pre years for better power
+#  assign(paste0("x",i,"pre"), 
+#    rbind(
+#    get( paste0( "x" , i, "pre" ) ),
+#    get( paste0( "x" , i, "prePool" ) )
+#  )
+#  )
+#  assign(paste0("x",i,"prePool"),NULL)
+#}
 
 
   
@@ -768,8 +827,8 @@ rm(preUnimputed,postUnimputed)
   cat("
 ################################################################################
 ######## This is the auto-generated output of R code written to display apparent
-######## health disparities between people with/without Serious Psychological
-######## Distress (SMI) in the United States. 
+######## health disparities between people with/without psychological distress
+######## in the United States. 
 ######## 
 ######## Author: Peter Phalen 
 ######## Dataset: National Health Interview Survey (NHIS; http://www.cdc.gov/nchs/nhis.htm)
@@ -787,78 +846,49 @@ cat("
     ")
 }
 
-cat("
-################################################################################
- 
-      
-      
-    Count of the USA population with and without Serious Psychological Distress (SMI)
-            
-      ")
-if (length(quarters.to.keep)<4){
-cat("
-    Total counts won't be accurate if you've restricted the number of quarters you chose to analyze
 
-    ")
-}
-cat("
-      ###### in",comparedToYear,"
-      
-      ")
-  
-  svytotal(~as.character(SMI),design = psa.Pre, na.rm=T)
   
   cat("
-      
-      ###### in",latestYear,"
-      
-      ")
-  svytotal(~as.character(SMI),design = psa.Post, na.rm=T)
-    
-  
-  cat("
+
 ################################################################################
      
-    Percent (%) of the USA population with and without Serious Psychological Distress (SMI)
-  
+    Percent (%) of the USA population with and without clinically significant psychological distress (K6 >= 5) 
+    
     The \"mean\" columns hold percentages. E.g., 0.30 = 30% of the corresponding population.
 
-      ###### in",comparedToYear,"
-  
-  ")
-  
-  svymean(~as.character(SMI),design = psa.Pre, na.rm=T)
-  
-  cat("
-  
       ###### in",latestYear,"
   
   ")
   
-  svymean(~as.character(SMI),design = psa.Post, na.rm=T)
-  
-  
-    
-  
-cat("################################################################################
+svymean(~modDistress, design = psa.Post, na.rm=T)
+
+cat("
+
+################################################################################
  
 
     Percent (%) of the USA population with health insurance coverage at the time of survey 
-    (Split up between those With vs. Without SMI)
+    (Split up between those With vs. Without Distress)
 
      ###### in",comparedToYear,"
 
       ")
   
-  (svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Pre, na.rm=T))
+  (svyby(~factor(coverage),~as.character(anyDistress),svymean, vartype="ci",design = psa.Pre, na.rm=T))
   
-  cat("
 
-      ###### in",latestYear,"
+cat("
 
-      ")
-  svyby(~factor(coverage),~as.character(SMI),svymean, vartype="ci",design = psa.Post, na.rm=T) 
+      ###### 
+     
+    Did these proportions change from",comparedToYear,"?
   
+  ")
+
+psa.noImpModDistress <- subset(psa.noImp, modDistress == 1)
+summary(svyglm(as.numeric(coverage)~YEAR, design=psa.noImpModDistress))
+
+
   cat("
 ################################################################################
 
@@ -868,7 +898,7 @@ cat("###########################################################################
       
       ")
   
- ( svyby(~factor(ahcsyr1),~as.character(SMI),design = psa.Pre, vartype="ci", svymean,na.rm=T) )
+ ( svyby(~factor(ahcsyr1),~as.character(anyDistress),design = psa.Pre, vartype="ci", svymean,na.rm=T) )
   
   cat("
       
@@ -876,7 +906,7 @@ cat("###########################################################################
 
       ")
   
- svyby(~factor(ahcsyr1),~as.character(SMI),svymean,design = psa.Post, vartype="ci", na.rm=T) 
+ svyby(~factor(ahcsyr1),~as.character(anyDistress),svymean,design = psa.Post, vartype="ci", na.rm=T) 
   
   cat(
 "
@@ -891,7 +921,7 @@ cat("###########################################################################
       ")
   
   summary(MIcombine(with( psa.impPre , 
-                          svyby(~factor(above.138),~as.character(SMI),svymean,na.rm=T))) )  
+                          svyby(~factor(above.138),~as.character(anyDistress),svymean,na.rm=T))) )  
   
   cat("
       
@@ -899,7 +929,7 @@ cat("###########################################################################
 
       ")
   summary(MIcombine(with( psa.impPost , 
-                          svyby(~factor(above.138),~as.character(SMI),svymean,na.rm=T))) )
+                          svyby(~factor(above.138),~as.character(anyDistress),svymean,na.rm=T))) )
   
   ## Plot income on K6 score
   ## Note: plots like these won't show up on your .txt sink file,
@@ -920,19 +950,19 @@ cat("###########################################################################
 ################################################################################
 
 
-    Average ages of people with and without SMI
+    Average ages of people with and without clinically significant psychological distress
       
      ###### in",comparedToYear,"
       
       ")
-  svyby(~age_p,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
+  svyby(~age_p,~as.character(anyDistress),svymean,design = psa.Pre,vartype="ci",na.rm=T)
   cat("
       
 
       ###### in",latestYear,"
 
       ")
-  svyby(~age_p,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
+  svyby(~age_p,~as.character(anyDistress),svymean,design = psa.Post, vartype="ci",na.rm=T)
   
   
   cat("
@@ -949,15 +979,36 @@ cat("###########################################################################
       
       ")
   
-  svyby(~Unemployment,~as.character(SMI),svymean,design = psa.Pre,vartype="ci",na.rm=T)
+  svyby(~Unemployment,~as.character(anyDistress),svymean,design = psa.Pre,vartype="ci",na.rm=T)
   cat("
       
       ###### in",latestYear,"
       
       ")
-  svyby(~Unemployment,~as.character(SMI),svymean,design = psa.Post, vartype="ci",na.rm=T)
+  svyby(~Unemployment,~as.character(anyDistress),svymean,design = psa.Post, vartype="ci",na.rm=T)
+  
+cat(
+  "
+################################################################################
   
   
+  % of people who said they didn't see MH prof because they couldn't afford it
+  
+  ###### in",comparedToYear,"
+  
+  ")
+
+summary(MIcombine(with( psa.impPre , 
+                        svyby(~factor(couldNotAffordMH),~as.character(anyDistress),svymean,na.rm=T))) )  
+
+cat("
+    
+    ###### in",latestYear,"
+    
+    ")
+summary(MIcombine(with( psa.impPost , 
+                        svyby(~factor(couldNotAffordMH),~as.character(anyDistress),svymean,na.rm=T))) )
+
   
   cat("
       
@@ -974,14 +1025,14 @@ cat("###########################################################################
   psa.CovPre <-  subset(psa.Pre, coverage=="Covered now")
   psa.CovPost <-  subset(psa.Post, coverage=="Covered now")
   
-  svyby(~factor(PublicInsurance),~as.character(SMI),svymean,vartype="ci",design=psa.CovPre,na.rm=T) 
+  svyby(~factor(PublicInsurance),~as.character(anyDistress),svymean,vartype="ci",design=psa.CovPre,na.rm=T) 
   
   cat("
       
       ###### in",latestYear,"
       
       ")
-  svyby(~factor(PublicInsurance),~as.character(SMI),svymean,design=psa.CovPost,vartype="ci",na.rm=T) 
+  svyby(~factor(PublicInsurance),~as.character(anyDistress),svymean,design=psa.CovPost,vartype="ci",na.rm=T) 
   
   
   #remove any survey design objects that we don't need for the remaining analyses
@@ -1004,7 +1055,7 @@ cat("
   ")
   
   summary(MIcombine( with( psa.impPost , 
-                           svyglm(factor(SMI) ~
+                           svyglm(factor(anyDistress) ~
                                     povrati3 +
                                     as.character(WHITE) +
                                     as.character(sex) +
@@ -1032,7 +1083,7 @@ cat("
                                     educ1 +
                                     age_p +
                                     as.character(coverage) +
-                                    as.character(SMI) ,
+                                    as.character(anyDistress) ,
                                   family=quasibinomial())
   )
   ))
@@ -1052,7 +1103,7 @@ cat("
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    as.character(SMI) ,
+                                    as.character(anyDistress) ,
                                   family=quasibinomial())
   )
   ))
@@ -1068,32 +1119,32 @@ cat("
       ")
   
   #create imputed survey design objects restricted to people with health insurance
-  psa.impCovPost <-  subset(psa.impPost, !is.na(coverage))
-  psa.impCovPost <-  subset(psa.impCovPost, coverage=="Covered now")
+#  psa.impCovPost <-  subset(psa.impPost, !is.na(coverage))
+#  psa.impCovPost <-  subset(psa.impCovPost, coverage=="Covered now")
   
   
-  summary(MIcombine( with( psa.impCovPost , 
+  summary(MIcombine( with( psa.impPost , 
                            svyglm(factor(PublicInsurance) ~
                                     povrati3 +
                                     educ1 +
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    as.character(SMI) ,
+                                    as.character(anyDistress) ,
                                   family=quasibinomial())
   )
   ))
   
-  rm(psa.impCovPost)
+ # rm(psa.impCovPost)
   cat("
 ################################################################################
 
 
  #####################
- #### Differences in differences (DIDs) for health insurance coverage (SMI v. no-SMI).
- #### The interaction effect (SMI:YEAR) tells us how much the disparity between SMI
- #### and non-SMI improved or worsened during the intervening time. In this case,
- #### a positive interaction between SMI and YEAR would indicate that the health 
+ #### Differences in differences (DIDs) for health insurance coverage (distress v. no-distress).
+ #### The interaction effect (anyDistress:YEAR) tells us how much the disparity between distressed
+ #### and non-distressed people improved or worsened during the intervening time. In this case,
+ #### a positive interaction between anyDistress and YEAR would indicate that the health 
  #### insurance disparity is decreasing. 
  ####
  #### Note: only the interaction effect is interpretable in these DIDs because the
@@ -1105,9 +1156,9 @@ cat("
 
   
                   summary(svyglm(as.numeric(coverage) ~
-                                    as.character(SMI) + 
+                                    as.character(anyDistress) + 
                                     as.character(YEAR) + 
-                                    as.character(SMI):as.character(YEAR),
+                                    as.character(anyDistress):as.character(YEAR),
                                   design=psa.noImp)
                       )
                 
@@ -1126,21 +1177,105 @@ cat("
       ")
   
   
-  summary(MIcombine( with( psa.imp , 
-                           svyglm(as.numeric(coverage) ~
-                                    educ1 +
-                                    povrati3 +
-                                    as.character(WHITE) +
-                                    as.character(sex) +
-                                    age_p +
-                                    as.character(SMI) + 
-                                    as.character(YEAR) + 
-                                    as.character(SMI):as.character(YEAR))
-                            )
-               ) 
-  )
+summary(MIcombine( with( psa.imp , 
+                         svyglm(as.numeric(coverage) ~
+                                  as.numeric(fine.povcat) +
+                                  educ1 +
+                                  as.character(WHITE) +
+                                  as.character(sex) +
+                                  age_p +
+                                  Unemployment +
+                                  as.character(anyDistress) + 
+                                  as.character(YEAR) + 
+                                  as.character(anyDistress):as.character(YEAR))
+)
+) 
+)
+
+
+
+
+
+ 
+# cat("
+    
+    ##############
+    ### TELL ME ABOUT REGION
+    ###
+    
+#    ")
+
+# model <- svyglm(as.numeric(coverage) ~
+#                                  as.character(SOUTHMW) +
+#                                  as.character(YEAR) + 
+#                                  as.character(SOUTHMW):as.character(YEAR),
+#                                  design=psa.noImp)
+
+
+# summary(
+#           svyglm(as.numeric(PublicInsurance) ~
+#                   as.character(SOUTHMW) +
+#                   as.character(SMI) + 
+#                   as.character(YEAR) + 
+#                   as.character(SMI):as.character(YEAR) +
+#                   as.character(SOUTHMW):as.character(YEAR) +
+#                   as.character(SOUTHMW):as.character(SMI) +
+#                   as.character(SMI):as.character(YEAR):as.character(SOUTHMW),
+#                  design=psa.noImp)
+#               )
+           
+
+
+
   
   
+cat("
+
+
+#####################
+#### DIDs for being unable to afford Mental healthcare
+#######
+
+
+")
+
+
+summary(svyglm(as.numeric(couldNotAffordMH) ~
+as.character(anyDistress) + 
+as.character(YEAR) + 
+as.character(anyDistress):as.character(YEAR),
+design=psa.noImp)
+)
+
+
+
+
+
+cat("
+
+###############  
+#### Now control for other variables
+
+
+")
+
+
+summary(MIcombine( with( psa.imp , 
+svyglm(as.numeric(couldNotAffordMH) ~
+as.numeric(fine.povcat) + 
+educ1 +
+as.character(WHITE) +
+as.character(sex) +
+age_p +
+as.character(anyDistress) + 
+as.character(YEAR) + 
+as.character(anyDistress):as.character(YEAR))
+)
+) 
+)
+
+
+
   cat("
 ################################################################################
       
@@ -1155,14 +1290,14 @@ cat("
   psa.impCov <-  subset(psa.imp, !is.na(coverage))
   psa.impCov <-  subset(psa.impCov, coverage=="Covered now")
   
-  summary(MIcombine( with( psa.impCov , 
+  summary( 
                            svyglm(as.numeric(PublicInsurance) ~
-                           as.character(SMI) + 
+                           as.character(anyDistress) + 
                              as.character(YEAR) + 
-                             as.character(SMI):as.character(YEAR))
+                             as.character(anyDistress):as.character(YEAR),
+                           design=psa.noImp)
                     )
-             )
-      )
+      
   
   
 cat("
@@ -1174,21 +1309,22 @@ cat("
       
       ")
 
-  summary(MIcombine( with( psa.impCov , 
+  summary(MIcombine( with( psa.imp , 
                            svyglm(as.numeric(PublicInsurance) ~
+                                    as.numeric(fine.povcat) + 
                                     educ1 +
-                                    povrati3 +
                                     as.character(WHITE) +
                                     as.character(sex) +
                                     age_p +
-                                    as.character(SMI) + 
+                                    Unemployment +
+                                    as.character(anyDistress) + 
                                     as.character(YEAR) + 
-                                    as.character(SMI):as.character(YEAR))
+                                    as.character(anyDistress):as.character(YEAR))
                     )
             )
     )
   
-  rm(psa.impCov)
+ # rm(psa.impCov)
   
   cat("
 
@@ -1196,16 +1332,16 @@ cat("
 
 
  ###############  
- #### DIDs for seeing mental health clinician in past 12 months (SMI v. no-SMI) 
+ #### DIDs for seeing mental health clinician in past 12 months (Distress v. no-Distress) 
  ########       
 
       ")
   
   summary(
         svyglm(as.numeric(ahcsyr1) ~
-                  as.character(SMI) + 
+                  as.character(anyDistress) + 
                   as.character(YEAR) +
-                  as.character(SMI):as.character(YEAR),
+                  as.character(anyDistress):as.character(YEAR),
                design=psa.noImp) 
         )
   
@@ -1215,7 +1351,7 @@ cat("
 ################################################################################
       
       ###############  
-      #### DIDs for seeing mental health clinician in past 12 months (SMI v. no-SMI) 
+      #### DIDs for seeing mental health clinician in past 12 months (Distress v. no-Distress) 
       #### controlling for lots of variables
       ########       
       
@@ -1223,15 +1359,16 @@ cat("
 
   summary( MIcombine( with( psa.imp , 
                                                svyglm(as.numeric(ahcsyr1) ~
-                                                        povrati3 +
+                                                        as.numeric(fine.povcat) +
                                                         as.character(WHITE) +
                                                         as.character(sex) +
                                                         age_p +
                                                         educ1 +
                                                         as.character(coverage) +
-                                                        as.character(SMI) + 
+                                                        Unemployment +
+                                                        as.character(anyDistress) + 
                                                         as.character(YEAR)  +
-                                                        as.character(SMI):as.character(YEAR)
+                                                        as.character(anyDistress):as.character(YEAR)
                                                       )
               ) 
         )
@@ -1244,72 +1381,45 @@ cat("
       
       
       ###############  
-      #### Simple DIDs for income (SMI v. no-SMI) 
+      #### Simple DIDs for income (Distress v. no-Distress) 
       ########       
       
       ")
   
-  summary(
-    svyglm(povrati3 ~
-             as.character(SMI) + 
+summary( MIcombine( with( psa.imp , 
+    svyglm(as.numeric(fine.povcat) ~
+             as.character(anyDistress) + 
              as.character(YEAR) +
-             as.character(SMI):as.character(YEAR),
-           design=psa.noImp) 
-  )
+             as.character(anyDistress):as.character(YEAR),
+           design=psa.Imp) 
+  )))
   
   
   cat("
             
       ###############  
-      #### DIDs for income (SMI v. no-SMI) 
+      #### DIDs for income (Distress v. no-Distress) 
       #### controlling for lots of variables.
       ########       
       
       ")
   
   summary( MIcombine( with( psa.imp , 
-                            svyglm(povrati3 ~
+                            svyglm(as.numeric(fine.povcat) ~
                                      as.character(WHITE) +
                                      as.character(sex) +
                                      age_p +
                                      educ1 +
-                                     as.character(SMI) + 
+                                     Unemployment +
+                                     as.character(anyDistress) + 
                                      as.character(YEAR)  +
-                                     as.character(SMI):as.character(YEAR)
+                                     as.character(anyDistress):as.character(YEAR)
                             )
                     ) 
             )
   )
   
   
-  
-  cat("
-      
-################################################################################
-      
-      ###############  
-      ###DID for racial disparity in health coverage
-      ########  
-
-      
-      ")
-  
-  summary(MIcombine( with( psa.imp , 
-                                     svyglm(as.numeric(coverage) ~
-                                              povrati3 +
-                                              educ1 +
-                                              as.character(SMI) +
-                                              as.character(sex) +
-                                              age_p +
-                                              as.character(WHITE) + 
-                                              as.character(YEAR)  +
-                                              as.character(WHITE):as.character(YEAR)
-                                     )
-                                )
-                            )
-                        )
-  
- 
 
   
   # remove the sink
