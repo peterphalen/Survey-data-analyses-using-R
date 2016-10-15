@@ -1,5 +1,5 @@
 
-The NHIS is a complex design nationally representative survey focused primarily on health-related outcomes. Multiply-imputed income data is available (and is used here). Note: manuscript in submission based on an expanded analysis of this data.
+The NHIS is a complex design nationally representative survey focused primarily on health-related outcomes. Multiply-imputed income data is available (and is used here). 
 
 Description of files:
 
